@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Briefing IR EOS para Gas Natural y LNG — UDO Cohorte 9-A</title>
+  <link rel="stylesheet" href="vendor/katex/katex.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Fixed Minimal HUD -->
+  <div class="hud-top-left" id="btn-home" title="Vista general del mapa (Tecla O)">
+    <img src="assets/Logo_UDO.svg" alt="Logo UDO" />
+    <span>IR EOS · BRIEFING UDO</span>
+  </div>
+
+  <div class="hud-top-right">
+    <button class="hud-pill" id="btn-timer" title="Iniciar/Pausar cronómetro de 10 min (Doble clic o R para reiniciar)">
+      ⏱ 00:00 / 10:00
+    </button>
+    <button class="hud-pill" id="btn-overview" title="Vista general (O / Esc)">Mapa (O)</button>
+    <button class="hud-pill" id="btn-notes" title="Notas del presentador (N)">Notas (N)</button>
+    <button class="hud-pill" id="btn-fullscreen" title="Pantalla completa (F)">⛶</button>
+  </div>
+
+  <!-- Prezi Viewport & 2D Spatial World -->
+  <main id="viewport" aria-label="Lienzo de presentación estilo Prezi">
+    <div id="world">
+
+      <!-- SVG Route Layer connecting the 6 stations -->
+      <svg id="route-svg" viewBox="0 0 7400 4300" aria-hidden="true">
+        <defs>
+          <marker id="arrow-navy" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+            <path d="M 1 2 L 10 6 L 1 10 z" fill="#2F4A7A" />
+          </marker>
+          <marker id="arrow-orange" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+            <path d="M 1 2 L 10 6 L 1 10 z" fill="#E07B39" />
+          </marker>
+        </defs>
+
+        <!-- 01 -> 02 -->
+        <path class="route-line" d="M 1900 1195 L 2480 1170" marker-end="url(#arrow-navy)" />
+        <!-- 02 -> 03 -->
+        <path class="route-line" d="M 4640 1170 L 5250 1240" marker-end="url(#arrow-navy)" />
+        <!-- 03 -> 04 -->
+        <path class="route-line" d="M 5980 1900 C 5980 2310, 5620 2250, 5620 2680" marker-end="url(#arrow-orange)" />
+        <!-- 04 -> 05 -->
+        <path class="route-line" d="M 4910 3070 L 4130 3090" marker-end="url(#arrow-navy)" />
+        <!-- 05 -> 06 -->
+        <path class="route-line" d="M 2750 3090 L 1980 3085" marker-end="url(#arrow-navy)" />
+        <!-- 06 -> 01 return loop -->
+        <path class="route-line" style="opacity:0.2" d="M 1300 2710 L 1220 1570" marker-end="url(#arrow-navy)" />
+
+        <!-- Milestone nodes -->
+        <g font-family="JetBrains Mono, Consolas, monospace" font-size="22" font-weight="700" text-anchor="middle">
+          <circle cx="2190" cy="1182" r="24" fill="#14284B" /><text x="2190" y="1190" fill="#FFF">→</text>
+          <circle cx="4945" cy="1205" r="24" fill="#14284B" /><text x="4945" y="1213" fill="#FFF">→</text>
+          <circle cx="5800" cy="2290" r="26" fill="#E07B39" /><text x="5800" y="2298" fill="#FFF">↓</text>
+          <circle cx="4520" cy="3080" r="24" fill="#14284B" /><text x="4520" y="3088" fill="#FFF">←</text>
+          <circle cx="2365" cy="3087" r="24" fill="#14284B" /><text x="2365" y="3095" fill="#FFF">←</text>
+        </g>
+      </svg>
+
+      <!-- Overview Banner -->
+      <header class="overview-banner" id="overview-banner">
+        <div class="overview-banner-left">
+          <img class="overview-udo" src="assets/Logo_UDO.svg" alt="Universidad de Oriente" />
+          <div>
+            <div class="overview-kicker">Briefing Técnico para Profesionales · 10 Minutos</div>
+            <h1 class="overview-title">Modelo IR EOS para Gas Natural y LNG</h1>
+            <p class="overview-sub">Evaluación crítica, modelo matemático y demostración interactiva sobre datos experimentales de alta presión</p>
+          </div>
+        </div>
+        <div class="overview-banner-right">
+          <div class="overview-presenters">Ing. Ruben Barrios · Ing. Gabriel Astudillo</div>
+          <div class="overview-cohort">M.Sc. Ingeniería de Gas · Universidad de Oriente · Cohorte 9-A</div>
+          <span class="overview-hint">Clic en una estación o presiona [→] / [Espacio]</span>
+        </div>
+      </header>
+
+      <!-- ==================== FRAME 1: ARTÍCULO ==================== -->
+      <section class="frame" id="frame-1" data-step="1" style="left:540px; top:820px; width:1360px; height:750px;">
+        <div class="frame-head">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span class="frame-kicker">01 · Presentación del Artículo</span>
+            <h2 class="frame-title">Ficha Técnica <span class="accent">y Contexto Editorial</span></h2>
+          </div>
+          <div class="frame-inst-badge">
+            <span>UDO · Cohorte 9-A</span>
+            <img src="assets/Logo_UDO.svg" alt="Logo UDO" />
+          </div>
+        </div>
+
+        <div class="f1-grid">
+          <div>
+            <h3 class="f1-main-title">Nuevo Modelo IR EOS para Gas Natural y LNG</h3>
+            <p class="f1-orig-title">“Enhanced GMA-Based IR EOS for Natural Gas and LNG Thermophysical Properties”</p>
+
+            <table class="meta-table">
+              <tr>
+                <th>AUTORES</th>
+                <td><strong>Mojtaba Moradian¹</strong>, <strong>Sattar Ghader¹</strong>, <strong>Abbas Ghareghashi²*</strong></td>
+              </tr>
+              <tr>
+                <th>REVISTA / AÑO</th>
+                <td><em>Chemical Process Design</em>, Vol. 3, No. 1 · <strong>2024</strong> (pp. 57–74)</td>
+              </tr>
+              <tr>
+                <th>LUGAR</th>
+                <td>¹Shahid Bahonar Univ. of Kerman · ²Velayat Univ., Iranshahr, <strong>Irán</strong></td>
+              </tr>
+              <tr>
+                <th>DOI / REF.</th>
+                <td style="font-family:var(--font-mono); font-size:15.5px;">10.22111/cpd.2024.50157.1043</td>
+              </tr>
+              <tr>
+                <th>PONENTES</th>
+                <td><strong>Ing. Ruben Barrios · Ing. Gabriel Astudillo</strong><br><span style="color:var(--ink-muted); font-size:15px;">M.Sc. Ingeniería de Gas · Universidad de Oriente · Cohorte 9-A</span></td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="f1-chart-panel">
+            <svg viewBox="0 0 420 380" width="100%" height="350" aria-label="Diagrama P-V conceptual">
+              <!-- Blueprint grid inside SVG -->
+              <g stroke="#DCE3EC" stroke-width="1">
+                <line x1="60" y1="40" x2="60" y2="330" /><line x1="120" y1="40" x2="120" y2="330" />
+                <line x1="180" y1="40" x2="180" y2="330" /><line x1="240" y1="40" x2="240" y2="330" />
+                <line x1="300" y1="40" x2="300" y2="330" /><line x1="360" y1="40" x2="360" y2="330" />
+                <line x1="50" y1="80" x2="380" y2="80" /><line x1="50" y1="140" x2="380" y2="140" />
+                <line x1="50" y1="200" x2="380" y2="200" /><line x1="50" y1="260" x2="380" y2="260" />
+              </g>
+              <!-- Axes -->
+              <line x1="55" y1="330" x2="395" y2="330" stroke="#14284B" stroke-width="2.5" />
+              <line x1="55" y1="330" x2="55" y2="25" stroke="#14284B" stroke-width="2.5" />
+              <polygon points="398,330 387,325 387,335" fill="#14284B" />
+              <polygon points="55,20 50,31 60,31" fill="#14284B" />
+              <text x="32" y="38" fill="#14284B" font-family="JetBrains Mono, monospace" font-size="20" font-weight="700">P</text>
+              <text x="380" y="358" fill="#14284B" font-family="JetBrains Mono, monospace" font-size="20" font-weight="700">v</text>
+
+              <!-- Covolume asymptote -->
+              <line x1="88" y1="35" x2="88" y2="330" stroke="#E07B39" stroke-width="2.5" stroke-dasharray="6 4" opacity="0.7" />
+              <text x="104" y="48" fill="#C45D1E" font-family="JetBrains Mono, monospace" font-size="13.5" font-weight="700">límite covolumen</text>
+
+              <!-- Isotherm curve -->
+              <path class="pv-curve" d="M 103 62 C 112 162, 140 234, 200 272 C 258 308, 322 316, 375 321" fill="none" stroke="#E07B39" stroke-width="4" stroke-linecap="round" />
+
+              <!-- Experimental nodes along isotherm -->
+              <g fill="#FFFFFF" stroke="#14284B" stroke-width="3">
+                <circle cx="109" cy="108" r="5.5" />
+                <circle cx="128" cy="176" r="5.5" />
+                <circle cx="158" cy="232" r="5.5" />
+                <circle cx="200" cy="272" r="5.5" />
+                <circle cx="250" cy="298" r="5.5" />
+                <circle cx="305" cy="312" r="5.5" />
+                <circle cx="358" cy="319" r="5.5" />
+              </g>
+              <text x="192" y="138" fill="#14284B" font-family="Inter, sans-serif" font-size="16" font-weight="700">Isoterma Gas Natural / LNG</text>
+              <text x="192" y="160" fill="#475569" font-family="JetBrains Mono, monospace" font-size="13.5">615 pts exp. · 0.6–190 MPa</text>
+            </svg>
+            <div class="f1-chart-caption">Validación de densidad y capacidad calorífica desde baja hasta ultra-alta presión</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== FRAME 2: INTRODUCCIÓN ==================== -->
+      <section class="frame" id="frame-2" data-step="2" style="left:2480px; top:750px; width:2160px; height:840px; transform:rotate(-1.2deg); transform-origin:center center;">
+        <div class="frame-head">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span class="frame-kicker">02 · Introducción</span>
+            <h2 class="frame-title">Contexto, Problemática <span class="accent">y Solución Planteada</span></h2>
+          </div>
+          <div class="frame-inst-badge">
+            <span>Gas Natural &amp; LNG · Simulación en Tiempo Real</span>
+          </div>
+        </div>
+
+        <div class="f2-layout">
+          <!-- Sub-stop 2A: Contexto y Problemática -->
+          <div class="subzone" id="subzone-2a">
+            <div class="subzone-tag">2A · Contexto y Problemática Industrial</div>
+            <h3 class="subzone-title">El Dilema: Precisión vs. Velocidad Computacional</h3>
+
+            <div class="context-strip">
+              <div class="mini-pill-card">
+                <strong>Contexto Operacional</strong>
+                El crecimiento del LNG y redes de alta presión exige predecir <em>ρ</em> y equilibrio con rigor en transporte y licuefacción criogénica.
+              </div>
+              <div class="mini-pill-card warn">
+                <strong>Riesgo por Desviación</strong>
+                Errores en zona criogénica o alta presión causan formación de sólidos, separación de fases y fallos mecánicos.
+              </div>
+            </div>
+
+            <div class="quadrant-box">
+              <svg viewBox="0 0 820 460" width="100%" height="100%" style="max-height:415px;" aria-label="Cuadrante precisión vs velocidad computacional">
+                <!-- Quadrant divider lines -->
+                <line x1="115" y1="225" x2="785" y2="225" stroke="#14284B" stroke-width="1.8" opacity="0.55" />
+                <line x1="445" y1="30" x2="445" y2="405" stroke="#14284B" stroke-width="1.8" opacity="0.55" />
+
+                <!-- Axes -->
+                <line x1="115" y1="405" x2="790" y2="405" stroke="#14284B" stroke-width="2.5" />
+                <line x1="115" y1="405" x2="115" y2="26" stroke="#14284B" stroke-width="2.5" />
+                <polygon points="796,405 784,400 784,410" fill="#14284B" />
+                <polygon points="115,20 110,32 120,32" fill="#14284B" />
+
+                <!-- Axis Labels -->
+                <text x="455" y="442" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="18" font-weight="800">Velocidad Computacional (Lenta → Tiempo Real)</text>
+                <text x="36" y="215" text-anchor="middle" transform="rotate(-90 36 215)" fill="#14284B" font-family="Inter, sans-serif" font-size="17.5" font-weight="800">Precisión en Alta Presión y LNG</text>
+
+                <!-- Scatter clusters -->
+                <g fill="#14284B" opacity="0.72">
+                  <circle cx="190" cy="70" r="4" /><circle cx="215" cy="85" r="4" /><circle cx="240" cy="60" r="4" />
+                  <circle cx="270" cy="78" r="4" /><circle cx="305" cy="58" r="4" /><circle cx="330" cy="92" r="4" />
+                  <circle cx="355" cy="68" r="4" /><circle cx="378" cy="84" r="4" /><circle cx="395" cy="62" r="4" />
+                  <circle cx="255" cy="95" r="4" /><circle cx="290" cy="108" r="4" /><circle cx="342" cy="112" r="4" />
+                  <circle cx="368" cy="104" r="4" /><circle cx="392" cy="96" r="4" /><circle cx="225" cy="102" r="4" />
+                </g>
+
+                <g fill="#8A8F98" opacity="0.75">
+                  <circle cx="520" cy="272" r="4" /><circle cx="548" cy="288" r="4" /><circle cx="576" cy="265" r="4" />
+                  <circle cx="605" cy="278" r="4" /><circle cx="632" cy="258" r="4" /><circle cx="662" cy="285" r="4" />
+                  <circle cx="695" cy="270" r="4" /><circle cx="718" cy="292" r="4" /><circle cx="745" cy="274" r="4" />
+                  <circle cx="590" cy="302" r="4" /><circle cx="645" cy="312" r="4" /><circle cx="705" cy="308" r="4" />
+                </g>
+
+                <!-- Top-left card: GERG-2008 / PC-SAFT -->
+                <rect x="150" y="72" width="248" height="62" rx="8" fill="#14284B" />
+                <text x="274" y="99" text-anchor="middle" fill="#FFF" font-family="Inter, sans-serif" font-size="16" font-weight="800">GERG-2008 / PC-SAFT</text>
+                <text x="274" y="121" text-anchor="middle" fill="#CBD5E1" font-family="Inter, sans-serif" font-size="13.5">Estándar de alta precisión</text>
+                <path d="M 150 103 L 135 103 L 135 166 L 152 166" fill="none" stroke="#475569" stroke-width="1.5" />
+                <text x="158" y="162" fill="#334155" font-family="Inter, sans-serif" font-size="14.5" font-weight="600">Alta carga computacional;</text>
+                <text x="158" y="182" fill="#334155" font-family="Inter, sans-serif" font-size="14.5">exige datos binarios extensos.</text>
+
+                <!-- Bottom-right card: PR / SRK -->
+                <rect x="490" y="286" width="234" height="60" rx="8" fill="#6B7280" />
+                <text x="607" y="312" text-anchor="middle" fill="#FFF" font-family="Inter, sans-serif" font-size="16" font-weight="800">Familia Cúbica (PR / SRK)</text>
+                <text x="607" y="333" text-anchor="middle" fill="#E2E8F0" font-family="Inter, sans-serif" font-size="13.5">Muy rápida y simple</text>
+                <path d="M 490 316 L 474 316 L 474 372 L 490 372" fill="none" stroke="#475569" stroke-width="1.5" />
+                <text x="496" y="368" fill="#334155" font-family="Inter, sans-serif" font-size="14.5" font-weight="600">Se degrada en alta presión,</text>
+                <text x="496" y="388" fill="#334155" font-family="Inter, sans-serif" font-size="14.5">LNG e impurezas (N₂, CO₂, H₂).</text>
+
+                <!-- Top-right Target Gap -->
+                <circle cx="580" cy="122" r="88" fill="#FFF4EC" stroke="#E07B39" stroke-width="3.5" stroke-dasharray="10 6" />
+                <text x="580" y="114" text-anchor="middle" fill="#C45D1E" font-family="Inter, sans-serif" font-size="19" font-weight="800">El hueco</text>
+                <text x="580" y="139" text-anchor="middle" fill="#C45D1E" font-family="Inter, sans-serif" font-size="19" font-weight="800">en la industria</text>
+
+                <path d="M 664 95 L 680 75 L 694 75" fill="none" stroke="#475569" stroke-width="1.5" />
+                <text x="698" y="68" fill="#14284B" font-family="Inter, sans-serif" font-size="14.5" font-weight="800">Objetivo IR EOS:</text>
+                <text x="698" y="88" fill="#334155" font-family="Inter, sans-serif" font-size="14">Precisión +</text>
+                <text x="698" y="106" fill="#334155" font-family="Inter, sans-serif" font-size="14">ligereza en vivo</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Sub-stop 2B: Solución Planteada -->
+          <div class="subzone" id="subzone-2b">
+            <div class="subzone-tag">2B · Posible Solución Planteada</div>
+            <h3 class="subzone-title">Anatomía de la Solución: De GMA a IR EOS</h3>
+
+            <div class="solution-triad">
+              <div class="sol-card">
+                <div class="sol-card-top">
+                  <h4>Modelo GMA<br>Original</h4>
+                  <div class="sol-icon">
+                    <svg viewBox="0 0 80 80" width="76" height="72">
+                      <path d="M40 10 C40 10 18 38 18 52 A22 22 0 0 0 62 52 C62 38 40 10 40 10 Z" fill="none" stroke="#14284B" stroke-width="3.5" />
+                      <path d="M29 52 A11 11 0 0 0 40 63" fill="none" stroke="#14284B" stroke-width="3" stroke-linecap="round" />
+                    </svg>
+                  </div>
+                  <p>Excelente para <strong>densidades líquidas</strong>. Falla en gases porque su linealidad no representa fuerzas intermoleculares débiles.</p>
+                </div>
+
+                <div class="sol-mini-svg">
+                  <svg viewBox="0 0 210 86" width="100%" height="68" aria-label="Comportamiento GMA">
+                    <line x1="22" y1="72" x2="196" y2="72" stroke="#14284B" stroke-width="1.5" />
+                    <line x1="22" y1="72" x2="22" y2="10" stroke="#14284B" stroke-width="1.5" />
+                    <line x1="30" y1="18" x2="184" y2="62" stroke="#B91C1C" stroke-width="2" stroke-dasharray="5 4" />
+                    <path d="M 32 16 Q 60 56, 184 66" fill="none" stroke="#14284B" stroke-width="2.2" />
+                    <circle cx="40" cy="28" r="3" fill="#14284B" /><circle cx="72" cy="49" r="3" fill="#14284B" />
+                    <circle cx="115" cy="59" r="3" fill="#14284B" /><circle cx="165" cy="64" r="3" fill="#14284B" />
+                    <text x="102" y="21" fill="#B91C1C" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700">Recta GMA ≠ Gas</text>
+                  </svg>
+                </div>
+
+                <ul class="sol-bullets">
+                  <li><strong>✓ Líquidos:</strong> ajuste lineal exacto</li>
+                  <li><strong>✗ Gases:</strong> ruptura a baja/media $\rho$</li>
+                </ul>
+                <div class="sol-card-foot">Linealidad: $(2Z-1)\nu^3$ vs. $\rho$</div>
+              </div>
+
+              <div class="sol-op">+</div>
+
+              <div class="sol-card">
+                <div class="sol-card-top">
+                  <h4>Potencial<br>Lennard-Jones (9,6,3)</h4>
+                  <div class="sol-icon">
+                    <svg viewBox="0 0 116 80" width="96" height="60">
+                      <circle cx="37" cy="48" r="12" fill="none" stroke="#14284B" stroke-width="3" />
+                      <circle cx="79" cy="48" r="12" fill="none" stroke="#14284B" stroke-width="3" />
+                      <path d="M49 48 L54 42 L58 54 L62 42 L67 48" fill="none" stroke="#E07B39" stroke-width="2.5" stroke-linejoin="round" />
+                      <path d="M45 28 L71 28 M66 23 L71 28 L66 33" fill="none" stroke="#14284B" stroke-width="2.2" />
+                      <path d="M71 66 L45 66 M50 61 L45 66 L50 71" fill="none" stroke="#14284B" stroke-width="2.2" />
+                      <text x="58" y="16" text-anchor="middle" fill="#C45D1E" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700">A(T), B(T), C(T)</text>
+                    </svg>
+                  </div>
+                  <p>Corrige el potencial intermolecular con tres términos dependientes de temperatura para capturar no idealidad real.</p>
+                </div>
+
+                <div class="sol-mini-svg" style="padding:8px 8px;">
+                  <div style="font-size:17px; color:var(--navy);">$$\frac{c_9}{r^9} - \frac{c_6}{r^6} - \frac{c_3}{r^3}$$</div>
+                  <div style="font-family:var(--font-mono); font-size:11.5px; color:var(--ink-muted); margin-top:2px;">repulsión · dispersión · efectiva</div>
+                </div>
+
+                <ul class="sol-bullets">
+                  <li><strong>+ $r^{-9}, r^{-6}$:</strong> repulsión y atracción</li>
+                  <li><strong>+ $r^{-3}$:</strong> interacciones efectivas en gas</li>
+                </ul>
+                <div class="sol-card-foot">9 constantes térmicas $(A_0\dots C_2)$</div>
+              </div>
+
+              <div class="sol-op">=</div>
+
+              <div class="sol-card featured">
+                <div class="sol-card-top">
+                  <h4>IR EOS</h4>
+                  <div class="sol-sub">Isotherm Regularity EOS</div>
+                  <div class="sol-icon" style="height:52px;">
+                    <svg viewBox="0 0 96 72" width="84" height="52">
+                      <path d="M28 10 C28 10 14 31 14 42 A14 14 0 0 0 42 42 C42 31 28 10 28 10 Z" fill="#14284B" />
+                      <path d="M52 30 H76 A6 6 0 1 0 70 24" fill="none" stroke="#14284B" stroke-width="3" stroke-linecap="round" />
+                      <path d="M48 40 H82 A6 6 0 1 1 76 46" fill="none" stroke="#E07B39" stroke-width="3" stroke-linecap="round" />
+                      <path d="M54 50 H72" fill="none" stroke="#14284B" stroke-width="3" stroke-linecap="round" />
+                    </svg>
+                  </div>
+                  <p>Transformación a <strong>$(Z-1)\nu^3$</strong> que unifica gas y líquido desde baja hasta muy alta presión.</p>
+                </div>
+
+                <div class="sol-mini-svg">
+                  <svg viewBox="0 0 210 86" width="100%" height="68" aria-label="Curva regularidad IR EOS">
+                    <line x1="22" y1="18" x2="196" y2="18" stroke="#14284B" stroke-width="1.5" />
+                    <line x1="22" y1="76" x2="22" y2="10" stroke="#14284B" stroke-width="1.5" />
+                    <path d="M 32 70 Q 65 24, 184 20" fill="none" stroke="#E07B39" stroke-width="2.8" />
+                    <circle cx="38" cy="63" r="3.2" fill="#14284B" /><circle cx="68" cy="36" r="3.2" fill="#14284B" />
+                    <circle cx="115" cy="24" r="3.2" fill="#14284B" /><circle cx="165" cy="21" r="3.2" fill="#14284B" />
+                    <text x="90" y="56" fill="#C45D1E" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700">IR EOS = Exactitud</text>
+                  </svg>
+                </div>
+
+                <ul class="sol-bullets">
+                  <li><strong>✓ Gas y LNG:</strong> 0.6 – 190 MPa</li>
+                  <li><strong>✓ Álgebra directa:</strong> apta tiempo real</li>
+                </ul>
+                <div class="sol-card-foot">Gas + LNG · 0.397% AAD global</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== FRAME 3: MODELO MATEMÁTICO ==================== -->
+      <section class="frame" id="frame-3" data-step="4" style="left:5250px; top:720px; width:1460px; height:1180px;">
+        <div class="frame-head">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span class="frame-kicker">03 · Presentación Matemática</span>
+            <h2 class="frame-title">Del Potencial Intermolecular <span class="accent">a la Ecuación Operativa</span></h2>
+          </div>
+          <div class="frame-inst-badge">
+            <span>Ecs. (1) – (14) del Artículo</span>
+          </div>
+        </div>
+
+        <div class="f3-stack">
+          <!-- Sub-stop 3A -->
+          <div class="f3-zone" id="subzone-3a">
+            <div class="subzone-tag">3A · Derivación Termodinámica (GMA → LJ 9-6-3 → IR EOS)</div>
+            <div class="eq-row-3">
+              <div class="eq-card">
+                <div class="eq-head">
+                  <span class="eq-label">1. Punto de partida: GMA</span>
+                  <span class="eq-badge">Ec. (1)</span>
+                </div>
+                <div class="eq-math">$$(2Z - 1)\nu^3 = A(T) + B(T)\rho$$</div>
+                <p class="eq-note">
+                  Relación lineal isotérmica con $\rho$. Describe con precisión densidades líquidas, pero pierde linealidad en la fase gaseosa.
+                </p>
+              </div>
+
+              <div class="eq-card">
+                <div class="eq-head">
+                  <span class="eq-label">2. Potencial LJ (9, 6, 3)</span>
+                  <span class="eq-badge">Ec. (3)</span>
+                </div>
+                <div class="eq-math">$$U = \frac{N}{2}Z\left(\frac{c_9}{r^9} - \frac{c_6}{r^6} - \frac{c_3}{r^3}\right)$$</div>
+                <p class="eq-note">
+                  Con $r = \nu^{1/3}$ y la presión interna $P_i = -(\partial u / \partial \nu)_T$, el término $r^{-3}$ captura fuerzas efectivas en gas.
+                </p>
+              </div>
+
+              <div class="eq-card featured">
+                <div class="eq-head">
+                  <span class="eq-label">3. Regularidad IR EOS</span>
+                  <span class="eq-badge">Ecs. (5, 10)</span>
+                </div>
+                <div class="eq-math">$$(Z - 1)\nu^3 = C(T) + \frac{B(T)}{\rho} + \frac{A(T)}{\rho^2}$$</div>
+                <p class="eq-note">
+                  Se elimina el factor <strong>2</strong> de GMA porque degradaba los cálculos en gas natural y LNG. Añade curvatura en $1/\rho$ y $1/\rho^2$.
+                </p>
+              </div>
+            </div>
+
+            <div class="var-legend" aria-label="Leyenda visual de variables">
+              <div class="var-chip"><span class="var-sym">Z</span><span>Factor de compresibilidad ($P\nu/RT$)</span></div>
+              <div class="var-chip"><span class="var-sym">ν, ρ</span><span>Volumen molar ($\nu = 1/\rho$) y densidad</span></div>
+              <div class="var-chip"><span class="var-sym">U, r</span><span>Energía potencial y distancia ($\nu^{1/3}$)</span></div>
+              <div class="var-chip"><span class="var-sym hot">c₉, c₆, c₃</span><span>Repulsión, dispersión y término efectivo</span></div>
+            </div>
+          </div>
+
+          <!-- Sub-stop 3B -->
+          <div class="f3-zone" id="subzone-3b">
+            <div class="subzone-tag">3B · Forma Polinómica Operativa y Calibración Térmica</div>
+            <div class="eq-row-2">
+              <div class="eq-card featured">
+                <div class="eq-head">
+                  <span class="eq-label">Ecuación de cálculo de densidad $\rho$</span>
+                  <span class="eq-badge">Ec. (11)</span>
+                </div>
+                <div class="eq-math">$$C(T)\rho^4 + B(T)\rho^3 + A(T)\rho^2 + \rho - \frac{P}{RT} = 0$$</div>
+                <p class="eq-note">
+                  Polinomio de cuarto grado en $\rho$ (dado $T, P$). Se resuelve en microsegundos mediante Newton-Raphson partiendo de $\rho_0 = P/(RT)$.
+                </p>
+              </div>
+
+              <div class="eq-card">
+                <div class="eq-head">
+                  <span class="eq-label">Dependencia térmica (9 constantes globales)</span>
+                  <span class="eq-badge">Ecs. (12)–(14)</span>
+                </div>
+                <div class="eq-math">
+                  $$A(T) = A_0 - \frac{A_1}{RT} + \frac{A_2}{R}\ln(T)$$
+                  $$B(T) = B_0 - \frac{B_1}{RT} + \frac{B_2}{R}\ln(T) \quad\;\; C(T) = C_0 - \frac{C_1}{RT} + \frac{C_2}{R}\ln(T)$$
+                </div>
+                <p class="eq-note">
+                  $A(T), B(T), C(T)$ ajustan la mezcla frente a $T$; $R$ es la constante universal de los gases.
+                </p>
+              </div>
+            </div>
+
+            <div class="key-insight-bar">
+              <span class="key-insight-tag">CONCLUSIÓN</span>
+              <span>Un polinomio directo en $\rho$ capaz de predecir densidades en gas y líquido en milisegundos.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== FRAME 4: DATOS DEL ARTÍCULO (TABLA 4) ==================== -->
+      <section class="frame" id="frame-4" data-step="6" style="left:4910px; top:2680px; width:1420px; height:780px;">
+        <div class="frame-head" style="margin-bottom:10px; padding-bottom:8px; gap:12px;">
+          <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+            <span class="frame-kicker" style="white-space:nowrap;">04 · Resultados</span>
+            <h2 class="frame-title" style="font-size:24.5px; white-space:nowrap;">IR EOS vs. GERG-2008 vs. PR EOS <span class="accent">· Tabla 4 (N. gas 11)</span></h2>
+          </div>
+          <div style="display:flex; align-items:center; gap:7px; flex-shrink:0;">
+            <button class="action-btn interactive-zone" id="btn-comp" style="white-space:nowrap;">Composición (Tabla 1)</button>
+            <button class="action-btn interactive-zone" id="btn-global" style="white-space:nowrap;">Resumen Global (Tablas 2 y 5)</button>
+            <button class="action-btn interactive-zone" id="btn-critique" style="border-color:var(--slate); color:var(--ink-muted); white-space:nowrap;" title="Ver notas metodológicas y lectura crítica">Notas Críticas</button>
+          </div>
+        </div>
+
+        <div class="lab-shell interactive-zone">
+          <!-- Interactive Controls -->
+          <div class="lab-toolbar">
+            <div class="ctrl-group">
+              <span class="ctrl-label">Isoterma T:</span>
+              <div id="iso-buttons" style="display:flex; gap:6px;"></div>
+            </div>
+
+            <div class="ctrl-group">
+              <span class="ctrl-label">Presión P (MPa):</span>
+              <div id="press-buttons" style="display:flex; gap:5px;"></div>
+              <input type="range" id="press-slider" min="0" max="5" step="1" value="5" style="width:94px; accent-color:var(--orange); cursor:pointer;" aria-label="Selector de presión" />
+            </div>
+          </div>
+
+          <!-- Experimental benchmark strip -->
+          <div class="exp-banner" id="exp-banner">
+            <div>
+              Exp. Tabla 4 [Barreau et al., 1996 · N. gas 11] · <span id="lab-state-tag" style="font-family:var(--font-mono); font-weight:700; color:var(--navy);">T = 307.85 K · P = 40.03 MPa</span>
+            </div>
+            <div>
+              ρ<sub>exp</sub> = <strong id="val-rho-exp">—</strong> mol/m³ &nbsp;|&nbsp; Z<sub>exp</sub> = <strong id="val-z-exp">—</strong>
+            </div>
+          </div>
+
+          <!-- 3 Model Cards (Tabla 4) -->
+          <div class="model-cards-grid">
+            <div class="model-card ir">
+              <div class="mc-top">
+                <span class="mc-name">IR EOS</span>
+                <span class="mc-tag">Tabla 4</span>
+              </div>
+              <div class="mc-val" id="val-ir">—</div>
+              <div class="mc-err" id="err-ir">—</div>
+              <div class="mc-sub">AAD Tabla 4: 0.15% · Global: 0.397%</div>
+            </div>
+
+            <div class="model-card gerg">
+              <div class="mc-top">
+                <span class="mc-name">GERG-2008</span>
+                <span class="mc-tag">Tabla 4</span>
+              </div>
+              <div class="mc-val" id="val-gerg">—</div>
+              <div class="mc-err" id="err-gerg">—</div>
+              <div class="mc-sub">AAD Tabla 4: 1.90% · Global: 2.36%</div>
+            </div>
+
+            <div class="model-card pr">
+              <div class="mc-top">
+                <span class="mc-name">PR EOS</span>
+                <span class="mc-tag">Tabla 4</span>
+              </div>
+              <div class="mc-val" id="val-pr">—</div>
+              <div class="mc-err" id="err-pr">—</div>
+              <div class="mc-sub">AAD Tabla 4: 5.19% · Global: 6.316%</div>
+            </div>
+          </div>
+
+          <!-- Bottom Analytics: Chart + AAD -->
+          <div class="lab-bottom">
+            <div class="chart-panel">
+              <div class="chart-head">
+                <div class="chart-tabs">
+                  <button class="tab-btn active" data-chart="reg-ir">Regularidad (Z−1)ν³</button>
+                  <button class="tab-btn" data-chart="reg-gma">Contraste GMA (Fig. 1)</button>
+                  <button class="tab-btn" data-chart="iso-pr">Isoterma ρ vs P</button>
+                </div>
+                <span id="chart-note" style="font-family:var(--font-mono); font-size:13px; color:var(--ink-muted); white-space:nowrap;">Fig. 3 · T = 307.85 K</span>
+              </div>
+              <div class="svg-holder" id="lab-svg-holder"></div>
+            </div>
+
+            <div class="right-stack">
+              <div class="aad-panel">
+                <div class="aad-title">
+                  <h4>AAD % Densidad</h4>
+                  <span>Tabla 4 (30 puntos)</span>
+                </div>
+                <div class="aad-row">
+                  <span class="aad-label" style="color:var(--orange-deep);">IR EOS</span>
+                  <div class="aad-track"><div class="aad-fill" id="bar-ir" style="background:var(--orange); width:0%"></div></div>
+                  <span class="aad-val" id="aad-ir">—</span>
+                </div>
+                <div class="aad-row">
+                  <span class="aad-label">GERG-2008</span>
+                  <div class="aad-track"><div class="aad-fill" id="bar-gerg" style="background:var(--navy); width:0%"></div></div>
+                  <span class="aad-val" id="aad-gerg">—</span>
+                </div>
+                <div class="aad-row">
+                  <span class="aad-label" style="color:var(--slate);">PR EOS</span>
+                  <div class="aad-track"><div class="aad-fill" id="bar-pr" style="background:var(--slate); width:0%"></div></div>
+                  <span class="aad-val" id="aad-pr">—</span>
+                </div>
+                <div style="margin-top:8px; font-family:var(--font-mono); font-size:12.5px; color:var(--ink-muted); border-top:1px solid var(--grid-major); padding-top:6px;">
+                  Contraste visual de GMA disponible en la pestaña Fig. 1
+                </div>
+              </div>
+
+              <div class="summary-mini-card">
+                <div class="summary-kv"><span>Criterio de Error</span><strong>$\frac{1}{N}\sum |\Delta\rho/\rho_{\text{exp}}|$</strong></div>
+                <div class="summary-kv"><span>Global Densidad (615 pts)</span><strong>0.397% · 2.36% · 6.32%</strong></div>
+                <div class="summary-kv"><span>Global $C_p$ (79 pts)</span><strong>1.95% · 2.02% · 5.51%</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal: Composición N. gas 11 -->
+          <div class="lab-modal" id="modal-comp">
+            <div class="lab-modal-head">
+              <h4>Composición N. gas 11 (Tabla 1 · Barreau et al., 1996)</h4>
+              <button class="action-btn" data-close-modal="modal-comp">Cerrar ✕</button>
+            </div>
+            <table class="comp-table" id="comp-table-body"></table>
+          </div>
+
+          <!-- Modal: Resumen Global (Tablas 2, 3 y 5) -->
+          <div class="lab-modal" id="modal-global">
+            <div class="lab-modal-head">
+              <h4>Resumen Global del Artículo · Tablas 2, 3 y 5 (615 pts Densidad · 79 pts $C_p$)</h4>
+              <button class="action-btn" data-close-modal="modal-global">Cerrar ✕</button>
+            </div>
+            <div style="overflow:auto; display:grid; grid-template-columns: 1.35fr 0.65fr; gap:16px;">
+              <div>
+                <div style="font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--navy); margin-bottom:6px;">TABLA 2 · % AAD DENSIDAD POR MEZCLA (14 SISTEMAS)</div>
+                <table class="comp-table compact-table" id="global-table2-body"></table>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <div>
+                  <div style="font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--navy); margin-bottom:6px;">TABLA 3 · % AAD CAPACIDAD CALORÍFICA ($C_p$)</div>
+                  <table class="comp-table compact-table" id="global-table3-body"></table>
+                </div>
+                <div>
+                  <div style="font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--navy); margin-bottom:6px;">TABLA 5 · RESUMEN GLOBAL (AAD % Y RMSE)</div>
+                  <table class="comp-table compact-table" id="global-table5-body"></table>
+                </div>
+              </div>
+            </div>
+            <div class="modal-legend" aria-label="Leyenda de variables del resumen global">
+              <span><strong>ΔT (K):</strong> rango térmico</span>
+              <span><strong>ΔP (MPa):</strong> rango de presión</span>
+              <span><strong>N<sub>p</sub>:</strong> puntos experimentales</span>
+              <span><strong>AAD (%):</strong> desviación absoluta media</span>
+              <span><strong>RMSE:</strong> raíz del error cuadrático medio</span>
+              <span><strong>C<sub>p</sub>:</strong> capacidad calorífica isobárica</span>
+              <span><strong>ERROR:</strong> sin resultado reportado en GERG</span>
+            </div>
+          </div>
+
+          <!-- Modal: Notas Críticas -->
+          <div class="lab-modal" id="modal-critique">
+            <div class="lab-modal-head">
+              <h4>Lectura Crítica y Auditoría de los Datos del Artículo</h4>
+              <button class="action-btn" data-close-modal="modal-critique">Cerrar ✕</button>
+            </div>
+            <div style="display:grid; gap:12px; font-size:16.5px; line-height:1.48; color:var(--ink);">
+              <div class="mini-pill-card">
+                <strong>1. Modelo correlativo vs. predictivos</strong>
+                IR EOS ajusta 9 constantes $(A_0\dots C_2)$ a los datos de cada mezcla (publicadas en material suplementario); PR EOS y GERG-2008 predicen sin ajuste específico a la muestra.
+              </div>
+              <div class="mini-pill-card">
+                <strong>2. Discrepancia interna entre Tabla 2 y Tabla 4 (N. gas 11)</strong>
+                En la Tabla 2, la fila de <em>N. gas 11</em> reporta AAD de <strong>0.03%</strong> (IR), <strong>5.27%</strong> (PR) y <strong>2.33%</strong> (GERG); sin embargo, el promedio directo de los 30 puntos de su propia Tabla 4 arroja <strong>0.15%</strong>, <strong>5.19%</strong> y <strong>1.90%</strong> respectivamente.
+              </div>
+              <div class="mini-pill-card warn">
+                <strong>3. Anomalía en GERG-2008 y ausencia numérica de GMA</strong>
+                El 1.90%–2.33% reportado para GERG en una mezcla con ~90% CH₄ (y celdas <code>ERROR</code> en Tabla 2) es atípicamente alto frente a implementaciones estándar como NIST REFPROP (~0.1%). Por su parte, GMA solo se muestra cualitativamente en las Figs. 1–2.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== FRAME 5: ÁREAS DE USO Y LIMITACIONES ==================== -->
+      <section class="frame" id="frame-5" data-step="7" style="left:2750px; top:2710px; width:1380px; height:760px; transform:rotate(1.2deg); transform-origin:center center;">
+        <div class="frame-head">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span class="frame-kicker">05 · Alcance</span>
+            <h2 class="frame-title">Áreas de Uso <span class="accent">y Limitaciones del Modelo</span></h2>
+          </div>
+          <div class="frame-inst-badge">
+            <span>Viabilidad Industrial</span>
+          </div>
+        </div>
+
+        <div class="f5-grid">
+          <div class="f5-col">
+            <div class="f5-col-head">
+              <h3>Áreas de Uso y Valor Industrial</h3>
+              <span class="eq-badge">Alta Viabilidad</span>
+            </div>
+
+            <div class="use-item">
+              <h4>1. Simulación y Control en Tiempo Real</h4>
+              <p>Arquitectura algebraica cuártica apta para gemelos digitales y sistemas SCADA donde GERG-2008 o PC-SAFT resultan lentos.</p>
+            </div>
+
+            <div class="use-item">
+              <h4>2. Densidad y Transferencia de Custodia</h4>
+              <p>AAD global de <strong>0.397%</strong> en 615 puntos experimentales (hasta 150–190 MPa) para cálculo volumétrico y compresión.</p>
+            </div>
+
+            <div class="use-item">
+              <h4>3. Operación Criogénica de LNG</h4>
+              <p>Previene separación de fases y sólidos, optimizando el efecto Joule-Thomson en ciclos de licuefacción.</p>
+            </div>
+
+            <!-- Representación visual industrial: Tubería -> Módulo IR EOS -> Aplicaciones LNG -->
+            <div class="f5-visual-box">
+              <svg viewBox="0 0 560 155" width="100%" height="145" aria-label="Flujo de tubería a módulo IR EOS">
+                <!-- Tubería de gas natural -->
+                <rect x="12" y="54" width="118" height="44" rx="4" fill="#EEF3F9" stroke="#14284B" stroke-width="2.5" />
+                <line x1="20" y1="54" x2="20" y2="98" stroke="#14284B" stroke-width="2" />
+                <line x1="122" y1="54" x2="122" y2="98" stroke="#14284B" stroke-width="2" />
+                <rect x="6" y="48" width="8" height="56" rx="2" fill="#14284B" />
+                <rect x="128" y="48" width="8" height="56" rx="2" fill="#14284B" />
+                <!-- Manómetro P, T -->
+                <line x1="71" y1="54" x2="71" y2="39" stroke="#14284B" stroke-width="2" />
+                <circle cx="71" cy="24" r="15" fill="#FFFFFF" stroke="#14284B" stroke-width="2.2" />
+                <line x1="71" y1="24" x2="80" y2="16" stroke="#E07B39" stroke-width="2.2" stroke-linecap="round" />
+                <text x="71" y="81" text-anchor="middle" fill="#14284B" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700">GAS · P, T, xᵢ</text>
+
+                <!-- Flecha entrada -->
+                <path d="M 142 76 H 176" stroke="#14284B" stroke-width="4" />
+                <polygon points="184,76 172,69 172,83" fill="#14284B" />
+
+                <!-- Módulo IR EOS -->
+                <rect x="188" y="34" width="136" height="84" rx="10" fill="#FFF4EC" stroke="#E07B39" stroke-width="3.5" />
+                <text x="256" y="64" text-anchor="middle" fill="#C45D1E" font-family="Inter, sans-serif" font-size="15" font-weight="800">Módulo</text>
+                <text x="256" y="85" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="17.5" font-weight="800">IR EOS</text>
+                <text x="256" y="105" text-anchor="middle" fill="#475569" font-family="JetBrains Mono, monospace" font-size="11.5">Tiempo Real</text>
+
+                <!-- Flechas salida -->
+                <path d="M 326 76 H 352 M 352 28 V 124 M 352 28 H 374 M 352 76 H 374 M 352 124 H 374" fill="none" stroke="#14284B" stroke-width="2.8" />
+                <polygon points="382,28 372,23 372,33" fill="#14284B" />
+                <polygon points="382,76 372,71 372,81" fill="#14284B" />
+                <polygon points="382,124 372,119 372,129" fill="#14284B" />
+
+                <!-- 3 Bloques salida -->
+                <rect x="385" y="10" width="165" height="36" rx="5" fill="#14284B" />
+                <text x="467" y="33" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="13.5" font-weight="700">Fase Criogénica LNG</text>
+
+                <rect x="385" y="58" width="165" height="36" rx="5" fill="#14284B" />
+                <text x="467" y="81" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="13.5" font-weight="700">Prevención de Sólidos</text>
+
+                <rect x="385" y="106" width="165" height="36" rx="5" fill="#14284B" />
+                <text x="467" y="129" text-anchor="middle" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="13.5" font-weight="700">Control Joule-Thomson</text>
+              </svg>
+            </div>
+          </div>
+
+          <div class="f5-col limits">
+            <div class="f5-col-head">
+              <h3>Limitaciones y Compromisos</h3>
+              <span class="eq-badge" style="background:var(--orange-soft); color:var(--orange-deep); border:1px solid var(--orange);">Trade-offs</span>
+            </div>
+
+            <div class="use-item">
+              <h4>1. Propiedades Termofísicas Secundarias</h4>
+              <p>Menor ventaja en capacidad calorífica ($C_p$: AAD <strong>1.95%</strong> vs GERG <strong>2.02%</strong>) y segundo coeficiente virial ($B_2$).</p>
+            </div>
+
+            <div class="use-item">
+              <h4>2. Mezclas Polares, Asociativas o Ricas en H₂</h4>
+              <p>El potencial LJ (9, 6, 3) está optimizado para hidrocarburos; agua o mezclas ricas en H₂ requieren reformulación.</p>
+            </div>
+
+            <div class="use-item">
+              <h4>3. Dependencia de Calibración Experimental</h4>
+              <p>Al ser correlativo en $(A_0\dots C_2)$, requiere datos previos por mezcla y validación frente a NIST/REFPROP.</p>
+            </div>
+
+            <!-- Representación visual compromisos: Gauge Cp + Moléculas H2O y H2 -->
+            <div class="f5-visual-box" style="border-color:#F3C4A4;">
+              <svg viewBox="0 0 560 155" width="100%" height="145" aria-label="Gauge Cp y moléculas polares">
+                <!-- Gauge Cp -->
+                <path d="M 55 112 A 76 76 0 0 1 207 112" fill="none" stroke="#E2E8F0" stroke-width="18" stroke-linecap="butt" />
+                <path d="M 131 36 A 76 76 0 0 1 207 112" fill="none" stroke="#CBD5E1" stroke-width="18" />
+                <path d="M 55 112 A 76 76 0 0 1 131 36" fill="none" stroke="#FFF4EC" stroke-width="18" />
+                <line x1="131" y1="112" x2="178" y2="66" stroke="#14284B" stroke-width="3.5" stroke-linecap="round" />
+                <circle cx="131" cy="112" r="7" fill="#14284B" />
+                <circle cx="80" cy="68" r="5" fill="#E07B39" />
+                <circle cx="182" cy="68" r="5" fill="#14284B" />
+                <text x="50" y="45" fill="#C45D1E" font-family="Inter, sans-serif" font-size="13" font-weight="800">IR EOS</text>
+                <text x="166" y="45" fill="#14284B" font-family="Inter, sans-serif" font-size="13" font-weight="800">GERG-2008</text>
+                <text x="131" y="140" text-anchor="middle" fill="#475569" font-family="JetBrains Mono, monospace" font-size="12.5">Cp: 1.95% vs 2.02%</text>
+
+                <line x1="255" y1="14" x2="255" y2="142" stroke="#DCE3EC" stroke-width="2" />
+
+                <!-- Molécula H2O -->
+                <line x1="342" y1="62" x2="306" y2="92" stroke="#14284B" stroke-width="4" />
+                <line x1="342" y1="62" x2="378" y2="92" stroke="#14284B" stroke-width="4" />
+                <circle cx="342" cy="56" r="20" fill="#DC2626" stroke="#14284B" stroke-width="2.5" />
+                <text x="342" y="62" text-anchor="middle" fill="#FFF" font-family="Inter, sans-serif" font-size="15" font-weight="800">O</text>
+                <circle cx="302" cy="96" r="13" fill="#FFF" stroke="#14284B" stroke-width="2.5" />
+                <text x="302" y="101" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="12" font-weight="800">H</text>
+                <circle cx="382" cy="96" r="13" fill="#FFF" stroke="#14284B" stroke-width="2.5" />
+                <text x="382" y="101" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="12" font-weight="800">H</text>
+
+                <!-- Molécula H2 -->
+                <line x1="442" y1="54" x2="484" y2="94" stroke="#14284B" stroke-width="6" />
+                <circle cx="438" cy="50" r="14" fill="#FFF" stroke="#14284B" stroke-width="2.5" />
+                <text x="438" y="55" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="12" font-weight="800">H</text>
+                <circle cx="488" cy="98" r="14" fill="#FFF" stroke="#14284B" stroke-width="2.5" />
+                <text x="488" y="103" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="12" font-weight="800">H</text>
+
+                <!-- Triángulo alerta -->
+                <polygon points="528,104 510,134 546,134" fill="#E07B39" />
+                <text x="528" y="130" text-anchor="middle" fill="#FFF" font-family="Inter, sans-serif" font-size="14" font-weight="800">!</text>
+                <text x="392" y="140" text-anchor="middle" fill="#475569" font-family="JetBrains Mono, monospace" font-size="12.5">Polares y H₂: requieren ajuste</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== FRAME 6: CONCLUSIÓN Y CIERRE ==================== -->
+      <section class="frame" id="frame-6" data-step="8" style="left:620px; top:2710px; width:1360px; height:750px;">
+        <div class="frame-head">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span class="frame-kicker">06 · Conclusión y Cierre</span>
+            <h2 class="frame-title">Síntesis Estratégica: <span class="accent">Tres Pilares para el Debate</span></h2>
+          </div>
+          <div class="frame-inst-badge">
+            <span>Cierre del Briefing</span>
+          </div>
+        </div>
+
+        <div class="f6-wrap">
+          <div class="pillars-grid">
+            <div class="pillar-card">
+              <span class="pillar-num">PILAR 01</span>
+              <svg viewBox="0 0 80 80" width="54" height="54">
+                <circle cx="28" cy="48" r="14" fill="none" stroke="#14284B" stroke-width="4" />
+                <circle cx="52" cy="28" r="10" fill="none" stroke="#14284B" stroke-width="4" />
+                <line x1="38" y1="38" x2="45" y2="33" stroke="#E07B39" stroke-width="4" />
+                <circle cx="28" cy="48" r="4" fill="#E07B39" />
+              </svg>
+              <h4>Innovación Teórica</h4>
+              <p>La integración del potencial Lennard-Jones (9, 6, 3) y la variable <strong>$(Z-1)\nu^3$</strong> resuelve la ruptura del modelo GMA en fase gaseosa.</p>
+            </div>
+
+            <div class="pillar-card center">
+              <span class="pillar-num">PILAR 02</span>
+              <svg viewBox="0 0 80 80" width="54" height="54">
+                <circle cx="40" cy="44" r="22" fill="none" stroke="#E07B39" stroke-width="4.5" />
+                <rect x="35" y="14" width="10" height="6" rx="2" fill="#E07B39" />
+                <line x1="40" y1="44" x2="53" y2="31" stroke="#14284B" stroke-width="4" stroke-linecap="round" />
+                <circle cx="40" cy="44" r="4" fill="#14284B" />
+              </svg>
+              <h4>Logro Industrial</h4>
+              <p>Precisión en densidad (<strong>0.397%</strong> AAD global; <strong>0.15%</strong> en Tabla 4 de N. gas 11) con rapidez cuasi-cúbica apta para tiempo real.</p>
+            </div>
+
+            <div class="pillar-card">
+              <span class="pillar-num">PILAR 03</span>
+              <svg viewBox="0 0 80 80" width="54" height="54">
+                <rect x="26" y="26" width="28" height="28" rx="5" fill="#14284B" />
+                <circle cx="40" cy="40" r="6" fill="#E07B39" />
+                <path d="M40 12 V26 M40 54 V68 M12 40 H26 M54 40 H68 M20 20 L29 29 M51 51 L60 60 M60 20 L51 29 M29 51 L20 60" stroke="#14284B" stroke-width="3" stroke-linecap="round" />
+              </svg>
+              <h4>Vector de Futuro</h4>
+              <p>Base extensible hacia mezclas de descarbonización (H₂, CO₂) y recalibración automática de $(A, B, C)$ asistida por Machine Learning.</p>
+            </div>
+          </div>
+
+          <div class="debate-box">
+            <div>
+              <p class="debate-q">“El valor de una ecuación de estado en ingeniería no reside en su complejidad matemática, sino en equilibrar el rigor físico con la rapidez necesaria para decidir en tiempo real.”</p>
+            </div>
+          </div>
+
+          <div class="closing-footer">
+            <div class="closing-id">
+              <img src="assets/Logo_UDO.svg" alt="Universidad de Oriente" />
+              <div>
+                <div class="closing-names">Ing. Ruben Barrios · Ing. Gabriel Astudillo</div>
+                <div class="closing-meta">M.Sc. Ingeniería de Gas · Universidad de Oriente · Cohorte 9-A</div>
+              </div>
+            </div>
+            <div style="text-align:right; font-family:var(--font-mono); font-size:14.5px; color:var(--ink-muted);">
+              Moradian, Ghader &amp; Ghareghashi (2024)<br>
+              <em>Chemical Process Design</em> 3(1): 57–74
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Presenter Notes Drawer (Key N) -->
+  <aside class="notes-drawer" id="notes-drawer" aria-live="polite">
+    <div class="notes-head">
+      <span id="notes-step-title">NOTAS DEL PRESENTADOR</span>
+      <span id="notes-time-cue">00:00</span>
+    </div>
+    <p class="notes-body" id="notes-body"></p>
+  </aside>
+
+  <!-- Bottom Floating Navigation Dock -->
+  <nav class="hud-dock" aria-label="Navegación de presentación">
+    <button class="dock-nav" id="btn-prev" title="Anterior (←)">‹</button>
+    <div class="dock-steps" id="dock-steps"></div>
+    <span class="dock-label" id="dock-label">Vista General</span>
+    <button class="dock-nav" id="btn-next" title="Siguiente (→ o Espacio)">›</button>
+  </nav>
+
+  <div class="progress-rail"><div class="progress-fill" id="progress-fill"></div></div>
+
+  <!-- Scripts (100% locales, sin internet requerido) -->
+  <script src="vendor/katex/katex.min.js"></script>
+  <script src="vendor/katex/auto-render.min.js"></script>
+  <script src="data.js"></script>
+  <script src="calc.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
