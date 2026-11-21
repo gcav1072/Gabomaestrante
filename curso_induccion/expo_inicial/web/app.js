@@ -112,7 +112,7 @@
 
   function getTargetGeometry(target) {
     if (target === "overview") {
-      return { cx: 3625, cy: 1870, w: 6350, h: 3580, rot: 0, pad: 0.94 };
+      return { cx: 3625, cy: 1800, w: 6350, h: 3440, rot: 0, isOverview: true };
     }
     const el = document.querySelector(target);
     const parentFrame = el.closest(".frame");
@@ -143,16 +143,30 @@
     return { cx, cy, w: el.offsetWidth, h: el.offsetHeight, rot };
   }
 
+  function getSafeViewport() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const compact = vh <= 820 || vw <= 1380;
+    const top = compact ? 40 : 52;
+    const bottom = compact ? 46 : 62;
+    const padX = compact ? 14 : 26;
+    const padY = compact ? 10 : 16;
+    return {
+      vw,
+      vh,
+      safeW: Math.max(320, vw - padX * 2),
+      safeH: Math.max(240, vh - top - bottom - padY * 2),
+      centerY: top + (vh - top - bottom) / 2,
+    };
+  }
+
   function applyCamera(cx, cy, scale, rot, animate = true) {
     camState = { cx, cy, scale, rot };
     if (animate) world.classList.add("animate-cam");
     else world.classList.remove("animate-cam");
 
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    // Centrar en la zona segura entre el HUD superior (56px) y el dock inferior (68px)
-    const safeCenterY = 56 + (vh - 124) / 2;
-    world.style.transform = `translate(${vw / 2}px, ${safeCenterY}px) scale(${scale}) rotate(${-rot}deg) translate(${-cx}px, ${-cy}px)`;
+    const { vw, centerY } = getSafeViewport();
+    world.style.transform = `translate(${vw / 2}px, ${centerY}px) scale(${scale}) rotate(${-rot}deg) translate(${-cx}px, ${-cy}px)`;
   }
 
   function goToStep(idx, animate = true) {
@@ -163,10 +177,9 @@
     if (currentStep > 0 && !timerStarted) startTimer();
 
     const geom = getTargetGeometry(step.target);
-    const pad = step.pad || geom.pad || 0.90;
-    const vw = window.innerWidth;
-    const safeH = window.innerHeight - 124;
-    const scale = Math.min((vw * pad) / geom.w, (safeH * pad) / geom.h);
+    const { safeW, safeH } = getSafeViewport();
+    const fitFactor = geom.isOverview ? 0.96 : 0.99;
+    const scale = Math.min((safeW * fitFactor) / geom.w, (safeH * fitFactor) / geom.h);
     applyCamera(geom.cx, geom.cy, scale, geom.rot, animate);
 
     // Highlight active frame & subzone
@@ -555,8 +568,8 @@
     const activePt = isoPts.find((d) => Math.abs(d.P - activeP) < 1e-2);
 
     const W = 740;
-    const H = 335;
-    const pad = { l: 84, r: 24, t: 24, b: 48 };
+    const H = 345;
+    const pad = { l: 94, r: 22, t: 22, b: 52 };
     const pw = W - pad.l - pad.r;
     const ph = H - pad.t - pad.b;
 
@@ -578,19 +591,19 @@
         const yv = yMin + (i / 4) * (yMax - yMin);
         const yp = mapY(yv, yMin, yMax);
         svgBody += `<line x1="${pad.l}" y1="${yp}" x2="${W - pad.r}" y2="${yp}" stroke="#E2E8F0" stroke-width="1" />`;
-        svgBody += `<text x="${pad.l - 8}" y="${yp + 4}" text-anchor="end" fill="#475569" font-family="JetBrains Mono, monospace" font-size="10.5">${yv.toExponential(1)}</text>`;
+        svgBody += `<text x="${pad.l - 8}" y="${yp + 4.5}" text-anchor="end" fill="#475569" font-family="JetBrains Mono, monospace" font-size="12.5">${yv.toExponential(1)}</text>`;
       }
       for (let i = 0; i <= 4; i++) {
         const xv = rMin + (i / 4) * (rMax - rMin);
         const xp = mapX(xv, rMin, rMax);
         svgBody += `<line x1="${xp}" y1="${pad.t}" x2="${xp}" y2="${H - pad.b}" stroke="#E2E8F0" stroke-width="1" />`;
-        svgBody += `<text x="${xp}" y="${H - pad.b + 16}" text-anchor="middle" fill="#475569" font-family="JetBrains Mono, monospace" font-size="10.5">${Math.round(xv)}</text>`;
+        svgBody += `<text x="${xp}" y="${H - pad.b + 18}" text-anchor="middle" fill="#475569" font-family="JetBrains Mono, monospace" font-size="12.5">${Math.round(xv)}</text>`;
       }
 
       const irPath = isoPts
         .map((d, idx) => `${idx === 0 ? "M" : "L"}${mapX(d.rhoIR_paper, rMin, rMax).toFixed(1)},${mapY(d.regIR_paper, yMin, yMax).toFixed(1)}`)
         .join(" ");
-      svgBody += `<path d="${irPath}" fill="none" stroke="#E07B39" stroke-width="3" />`;
+      svgBody += `<path d="${irPath}" fill="none" stroke="#E07B39" stroke-width="3.2" />`;
 
       isoPts.forEach((d) => {
         const cx = mapX(d.rhoExp, rMin, rMax);
@@ -598,15 +611,15 @@
         if (d === activePt) {
           svgBody += `<circle cx="${cx}" cy="${cy}" r="11" fill="#FFF4EC" stroke="#E07B39" stroke-width="2.5" />`;
         }
-        svgBody += `<circle cx="${cx}" cy="${cy}" r="5" fill="#14284B" stroke="#FFFFFF" stroke-width="1.5" />`;
+        svgBody += `<circle cx="${cx}" cy="${cy}" r="5.5" fill="#14284B" stroke="#FFFFFF" stroke-width="1.5" />`;
       });
 
-      svgBody += `<text x="${pad.l + pw / 2}" y="${H - 8}" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="12.5" font-weight="700">Densidad molar ρ (mol/m³)</text>`;
-      svgBody += `<text x="18" y="${pad.t + ph / 2}" text-anchor="middle" transform="rotate(-90 18 ${pad.t + ph / 2})" fill="#14284B" font-family="Inter, sans-serif" font-size="12.5" font-weight="700">(Z − 1)ν³  [m⁹/mol³]</text>`;
-      svgBody += `<g transform="translate(${W - 220}, ${pad.t + 8})">
-        <rect width="190" height="44" rx="5" fill="#FFF" stroke="#CBD5E1" />
-        <line x1="10" y1="15" x2="32" y2="15" stroke="#E07B39" stroke-width="3" /><text x="38" y="19" font-size="11.5" fill="#111827" font-weight="700">IR EOS (Tabla 4)</text>
-        <circle cx="21" cy="31" r="4.5" fill="#14284B" /><text x="38" y="35" font-size="11.5" fill="#111827">Exp. Tabla 4</text>
+      svgBody += `<text x="${pad.l + pw / 2}" y="${H - 8}" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="15" font-weight="700">Densidad molar ρ (mol/m³)</text>`;
+      svgBody += `<text x="20" y="${pad.t + ph / 2}" text-anchor="middle" transform="rotate(-90 20 ${pad.t + ph / 2})" fill="#14284B" font-family="Inter, sans-serif" font-size="15" font-weight="700">(Z − 1)ν³  [m⁹/mol³]</text>`;
+      svgBody += `<g transform="translate(${W - 238}, ${pad.t + 6})">
+        <rect width="210" height="50" rx="5" fill="#FFF" stroke="#CBD5E1" />
+        <line x1="10" y1="17" x2="32" y2="17" stroke="#E07B39" stroke-width="3" /><text x="38" y="21" font-size="13.5" fill="#111827" font-weight="700">IR EOS (Tabla 4)</text>
+        <circle cx="21" cy="36" r="5" fill="#14284B" /><text x="38" y="40" font-size="13.5" fill="#111827">Exp. Tabla 4</text>
       </g>`;
     } else if (activeChart === "reg-gma") {
       noteEl.textContent = `Fig. 1 · Ruptura lineal GMA en gas (T = ${selectedTemp} K)`;
@@ -626,13 +639,13 @@
         const yv = yMin + (i / 4) * (yMax - yMin);
         const yp = mapY(yv, yMin, yMax);
         svgBody += `<line x1="${pad.l}" y1="${yp}" x2="${W - pad.r}" y2="${yp}" stroke="#E2E8F0" stroke-width="1" />`;
-        svgBody += `<text x="${pad.l - 8}" y="${yp + 4}" text-anchor="end" fill="#475569" font-family="JetBrains Mono, monospace" font-size="10.5">${yv.toExponential(1)}</text>`;
+        svgBody += `<text x="${pad.l - 8}" y="${yp + 4.5}" text-anchor="end" fill="#475569" font-family="JetBrains Mono, monospace" font-size="12.5">${yv.toExponential(1)}</text>`;
       }
       for (let i = 0; i <= 4; i++) {
         const xv = rMin + (i / 4) * (rMax - rMin);
         const xp = mapX(xv, rMin, rMax);
         svgBody += `<line x1="${xp}" y1="${pad.t}" x2="${xp}" y2="${H - pad.b}" stroke="#E2E8F0" stroke-width="1" />`;
-        svgBody += `<text x="${xp}" y="${H - pad.b + 16}" text-anchor="middle" fill="#475569" font-family="JetBrains Mono, monospace" font-size="10.5">${Math.round(xv)}</text>`;
+        svgBody += `<text x="${xp}" y="${H - pad.b + 18}" text-anchor="middle" fill="#475569" font-family="JetBrains Mono, monospace" font-size="12.5">${Math.round(xv)}</text>`;
       }
 
       svgBody += `<line x1="${mapX(line[0][0], rMin, rMax)}" y1="${mapY(line[0][1], yMin, yMax)}" x2="${mapX(line[1][0], rMin, rMax)}" y2="${mapY(line[1][1], yMin, yMax)}" stroke="#B91C1C" stroke-width="2.8" stroke-dasharray="7 5" />`;
@@ -641,15 +654,15 @@
         const cx = mapX(d.rhoExp, rMin, rMax);
         const cy = mapY(d.regGMA_exp, yMin, yMax);
         if (d === activePt) svgBody += `<circle cx="${cx}" cy="${cy}" r="11" fill="#FEF2F2" stroke="#B91C1C" stroke-width="2" />`;
-        svgBody += `<circle cx="${cx}" cy="${cy}" r="5" fill="#14284B" stroke="#FFFFFF" stroke-width="1.5" />`;
+        svgBody += `<circle cx="${cx}" cy="${cy}" r="5.5" fill="#14284B" stroke="#FFFFFF" stroke-width="1.5" />`;
       });
 
-      svgBody += `<text x="${pad.l + pw / 2}" y="${H - 8}" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="12.5" font-weight="700">Densidad molar ρ (mol/m³)</text>`;
-      svgBody += `<text x="18" y="${pad.t + ph / 2}" text-anchor="middle" transform="rotate(-90 18 ${pad.t + ph / 2})" fill="#14284B" font-family="Inter, sans-serif" font-size="12.5" font-weight="700">(2Z − 1)ν³  [m⁹/mol³]</text>`;
-      svgBody += `<g transform="translate(${W - 235}, ${pad.t + 8})">
-        <rect width="205" height="44" rx="5" fill="#FFF" stroke="#CBD5E1" />
-        <line x1="10" y1="15" x2="32" y2="15" stroke="#B91C1C" stroke-width="2.5" stroke-dasharray="5 3" /><text x="38" y="19" font-size="11.5" fill="#B91C1C" font-weight="700">Recta lineal (GMA)</text>
-        <circle cx="21" cy="31" r="4.5" fill="#14284B" /><text x="38" y="35" font-size="11.5" fill="#111827">Curva real (Exp.)</text>
+      svgBody += `<text x="${pad.l + pw / 2}" y="${H - 8}" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="15" font-weight="700">Densidad molar ρ (mol/m³)</text>`;
+      svgBody += `<text x="20" y="${pad.t + ph / 2}" text-anchor="middle" transform="rotate(-90 20 ${pad.t + ph / 2})" fill="#14284B" font-family="Inter, sans-serif" font-size="15" font-weight="700">(2Z − 1)ν³  [m⁹/mol³]</text>`;
+      svgBody += `<g transform="translate(${W - 252}, ${pad.t + 6})">
+        <rect width="224" height="50" rx="5" fill="#FFF" stroke="#CBD5E1" />
+        <line x1="10" y1="17" x2="32" y2="17" stroke="#B91C1C" stroke-width="2.5" stroke-dasharray="5 3" /><text x="38" y="21" font-size="13.5" fill="#B91C1C" font-weight="700">Recta lineal (GMA)</text>
+        <circle cx="21" cy="36" r="5" fill="#14284B" /><text x="38" y="40" font-size="13.5" fill="#111827">Curva real (Exp.)</text>
       </g>`;
     } else {
       noteEl.textContent = `ρ vs P · T = ${selectedTemp} K (datos Tabla 4)`;
@@ -663,12 +676,12 @@
         const yv = yMin + (i / 4) * (yMax - yMin);
         const yp = mapY(yv, yMin, yMax);
         svgBody += `<line x1="${pad.l}" y1="${yp}" x2="${W - pad.r}" y2="${yp}" stroke="#E2E8F0" stroke-width="1" />`;
-        svgBody += `<text x="${pad.l - 8}" y="${yp + 4}" text-anchor="end" fill="#475569" font-family="JetBrains Mono, monospace" font-size="10.5">${Math.round(yv)}</text>`;
+        svgBody += `<text x="${pad.l - 8}" y="${yp + 4.5}" text-anchor="end" fill="#475569" font-family="JetBrains Mono, monospace" font-size="12.5">${Math.round(yv)}</text>`;
       }
       PRESSURES.forEach((pv) => {
         const xp = mapX(pv, pMin, pMax);
         svgBody += `<line x1="${xp}" y1="${pad.t}" x2="${xp}" y2="${H - pad.b}" stroke="#E2E8F0" stroke-width="1" />`;
-        svgBody += `<text x="${xp}" y="${H - pad.b + 16}" text-anchor="middle" fill="#475569" font-family="JetBrains Mono, monospace" font-size="10.5">${pv.toFixed(1)}</text>`;
+        svgBody += `<text x="${xp}" y="${H - pad.b + 18}" text-anchor="middle" fill="#475569" font-family="JetBrains Mono, monospace" font-size="12.5">${pv.toFixed(1)}</text>`;
       });
 
       const actX = mapX(activeP, pMin, pMax);
@@ -680,28 +693,28 @@
 
       svgBody += `<path d="${prPath}" fill="none" stroke="#6B7280" stroke-width="2.5" />`;
       svgBody += `<path d="${gergPath}" fill="none" stroke="#14284B" stroke-width="2" stroke-dasharray="6 4" />`;
-      svgBody += `<path d="${irPath}" fill="none" stroke="#E07B39" stroke-width="3" />`;
+      svgBody += `<path d="${irPath}" fill="none" stroke="#E07B39" stroke-width="3.2" />`;
 
       isoPts.forEach((d) => {
         const cx = mapX(d.P, pMin, pMax);
-        svgBody += `<circle cx="${cx}" cy="${mapY(d.rhoExp, yMin, yMax)}" r="4.5" fill="#14284B" stroke="#FFF" stroke-width="1.2" />`;
+        svgBody += `<circle cx="${cx}" cy="${mapY(d.rhoExp, yMin, yMax)}" r="5" fill="#14284B" stroke="#FFF" stroke-width="1.2" />`;
       });
 
-      svgBody += `<text x="${pad.l + pw / 2}" y="${H - 8}" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="12.5" font-weight="700">Presión P (MPa)</text>`;
-      svgBody += `<text x="18" y="${pad.t + ph / 2}" text-anchor="middle" transform="rotate(-90 18 ${pad.t + ph / 2})" fill="#14284B" font-family="Inter, sans-serif" font-size="12.5" font-weight="700">Densidad ρ (mol/m³)</text>`;
+      svgBody += `<text x="${pad.l + pw / 2}" y="${H - 8}" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="15" font-weight="700">Presión P (MPa)</text>`;
+      svgBody += `<text x="20" y="${pad.t + ph / 2}" text-anchor="middle" transform="rotate(-90 20 ${pad.t + ph / 2})" fill="#14284B" font-family="Inter, sans-serif" font-size="15" font-weight="700">Densidad ρ (mol/m³)</text>`;
       svgBody += `<g transform="translate(${pad.l + 12}, ${pad.t + 6})">
-        <rect width="192" height="82" rx="5" fill="#FFF" fill-opacity="0.94" stroke="#CBD5E1" />
-        <line x1="10" y1="16" x2="30" y2="16" stroke="#E07B39" stroke-width="3" /><text x="36" y="20" font-size="11" fill="#111827" font-weight="700">IR EOS (Tabla 4)</text>
-        <line x1="10" y1="33" x2="30" y2="33" stroke="#14284B" stroke-width="2" stroke-dasharray="5 3" /><text x="36" y="37" font-size="11" fill="#111827">GERG-2008 (Tabla 4)</text>
-        <line x1="10" y1="50" x2="30" y2="50" stroke="#6B7280" stroke-width="2.5" /><text x="36" y="54" font-size="11" fill="#111827">PR EOS (Tabla 4)</text>
-        <circle cx="20" cy="68" r="4" fill="#14284B" /><text x="36" y="72" font-size="11" fill="#111827">Experimental (Tabla 4)</text>
+        <rect width="218" height="94" rx="5" fill="#FFF" fill-opacity="0.94" stroke="#CBD5E1" />
+        <line x1="10" y1="18" x2="30" y2="18" stroke="#E07B39" stroke-width="3" /><text x="36" y="22" font-size="13" fill="#111827" font-weight="700">IR EOS (Tabla 4)</text>
+        <line x1="10" y1="38" x2="30" y2="38" stroke="#14284B" stroke-width="2" stroke-dasharray="5 3" /><text x="36" y="42" font-size="13" fill="#111827">GERG-2008 (Tabla 4)</text>
+        <line x1="10" y1="58" x2="30" y2="58" stroke="#6B7280" stroke-width="2.5" /><text x="36" y="62" font-size="13" fill="#111827">PR EOS (Tabla 4)</text>
+        <circle cx="20" cy="78" r="4.5" fill="#14284B" /><text x="36" y="82" font-size="13" fill="#111827">Experimental (Tabla 4)</text>
       </g>`;
     }
 
     const axes = `<line x1="${pad.l}" y1="${H - pad.b}" x2="${W - pad.r}" y2="${H - pad.b}" stroke="#14284B" stroke-width="2" />
                   <line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${H - pad.b}" stroke="#14284B" stroke-width="2" />`;
 
-    holder.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" style="max-height:330px;">${svgBody}${axes}</svg>`;
+    holder.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" style="max-height:100%;">${svgBody}${axes}</svg>`;
   }
 
   /* ==================== 4. ARRANQUE ==================== */
