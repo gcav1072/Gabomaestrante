@@ -450,6 +450,16 @@ html, body {
   margin-bottom: 2px;
 }
 
+#modal-critique .mini-pill-card strong {
+  display: inline;
+  margin-bottom: 0;
+}
+
+#modal-critique .mini-pill-card strong:first-child {
+  display: block;
+  margin-bottom: 4px;
+}
+
 .mini-pill-card.warn {
   background: var(--orange-soft);
   border-left-color: var(--orange);
@@ -880,8 +890,8 @@ html, body {
 
 .model-cards-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 
 .model-card {
@@ -1236,6 +1246,27 @@ html, body {
   color: var(--navy);
   font-family: var(--font-mono);
   font-size: 12px;
+}
+
+.compact-table th, .compact-table td {
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+.modal-legend {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--grid-major);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+
+.modal-legend strong {
+  font-family: var(--font-mono);
+  color: var(--navy);
 }
 
 /* ---------- Frame 5: Áreas de Uso y Limitaciones ---------- */

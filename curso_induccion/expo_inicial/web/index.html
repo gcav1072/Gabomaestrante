@@ -457,17 +457,16 @@
         </div>
       </section>
 
-      <!-- ==================== FRAME 4: LABORATORIO JS ==================== -->
+      <!-- ==================== FRAME 4: DATOS DEL ARTÍCULO (TABLA 4) ==================== -->
       <section class="frame" id="frame-4" data-step="6" style="left:4810px; top:2630px; width:1620px; height:980px;">
         <div class="frame-head" style="margin-bottom:14px; padding-bottom:10px;">
           <div style="display:flex; align-items:center; gap:14px;">
-            <span class="frame-kicker">04 · Laboratorio en Vivo (JS)</span>
-            <h2 class="frame-title" style="font-size:28px;">IR EOS vs. PR y GMA vs. GERG-2008 <span class="accent">· Tabla 4 (N. gas 11)</span></h2>
+            <span class="frame-kicker">04 · Resultados del Artículo</span>
+            <h2 class="frame-title" style="font-size:28px;">IR EOS vs. GERG-2008 vs. PR EOS <span class="accent">· Tabla 4 (N. gas 11)</span></h2>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
-            <button class="action-btn interactive-zone" id="btn-comp">Composición</button>
-            <button class="action-btn interactive-zone" id="btn-hidden-iso" title="Excluye la isoterma seleccionada del ajuste y la predice sin haberla visto">Isoterma Oculta: OFF</button>
-            <button class="action-btn interactive-zone" id="btn-code">&lt;/&gt; Código JS</button>
+            <button class="action-btn interactive-zone" id="btn-comp">Composición (Tabla 1)</button>
+            <button class="action-btn interactive-zone" id="btn-global">Resumen Global (Tablas 2 y 5)</button>
             <button class="action-btn interactive-zone" id="btn-critique" style="border-color:var(--slate); color:var(--ink-muted);" title="Ver notas metodológicas y lectura crítica">Notas Críticas</button>
           </div>
         </div>
@@ -490,23 +489,23 @@
           <!-- Experimental benchmark strip -->
           <div class="exp-banner" id="exp-banner">
             <div>
-              Exp. Tabla 4 [N. gas 11] · <span id="lab-state-tag" style="font-family:var(--font-mono); font-weight:700; color:var(--navy);">T = 307.85 K · P = 40.03 MPa</span>
+              Exp. Tabla 4 [Barreau et al., 1996 · N. gas 11] · <span id="lab-state-tag" style="font-family:var(--font-mono); font-weight:700; color:var(--navy);">T = 307.85 K · P = 40.03 MPa</span>
             </div>
             <div>
               ρ<sub>exp</sub> = <strong id="val-rho-exp">—</strong> mol/m³ &nbsp;|&nbsp; Z<sub>exp</sub> = <strong id="val-z-exp">—</strong>
             </div>
           </div>
 
-          <!-- 4 Model Cards -->
+          <!-- 3 Model Cards (Tabla 4) -->
           <div class="model-cards-grid">
             <div class="model-card ir">
               <div class="mc-top">
                 <span class="mc-name">IR EOS</span>
-                <span class="mc-tag" id="tag-ir-mode">En vivo</span>
+                <span class="mc-tag">Tabla 4</span>
               </div>
               <div class="mc-val" id="val-ir">—</div>
               <div class="mc-err" id="err-ir">—</div>
-              <div class="mc-sub" id="sub-ir">Paper: —</div>
+              <div class="mc-sub">AAD Tabla 4: 0.15% · Global: 0.397%</div>
             </div>
 
             <div class="model-card gerg">
@@ -516,27 +515,17 @@
               </div>
               <div class="mc-val" id="val-gerg">—</div>
               <div class="mc-err" id="err-gerg">—</div>
-              <div class="mc-sub">Reportado por autores</div>
+              <div class="mc-sub">AAD Tabla 4: 1.90% · Global: 2.36%</div>
             </div>
 
             <div class="model-card pr">
               <div class="mc-top">
                 <span class="mc-name">PR EOS</span>
-                <span class="mc-tag">En vivo</span>
+                <span class="mc-tag">Tabla 4</span>
               </div>
               <div class="mc-val" id="val-pr">—</div>
               <div class="mc-err" id="err-pr">—</div>
-              <div class="mc-sub" id="sub-pr">Paper: —</div>
-            </div>
-
-            <div class="model-card gma">
-              <div class="mc-top">
-                <span class="mc-name">GMA EOS</span>
-                <span class="mc-tag">En vivo</span>
-              </div>
-              <div class="mc-val" id="val-gma">—</div>
-              <div class="mc-err" id="err-gma">—</div>
-              <div class="mc-sub" id="sub-gma">Lineal en isoterma</div>
+              <div class="mc-sub">AAD Tabla 4: 5.19% · Global: 6.316%</div>
             </div>
           </div>
 
@@ -546,7 +535,7 @@
               <div class="chart-head">
                 <div class="chart-tabs">
                   <button class="tab-btn active" data-chart="reg-ir">Regularidad (Z−1)ν³</button>
-                  <button class="tab-btn" data-chart="reg-gma">Falla GMA (2Z−1)ν³</button>
+                  <button class="tab-btn" data-chart="reg-gma">Contraste GMA (Fig. 1)</button>
                   <button class="tab-btn" data-chart="iso-pr">Isoterma ρ vs P</button>
                 </div>
                 <span id="chart-note" style="font-family:var(--font-mono); font-size:11px; color:var(--ink-muted); white-space:nowrap;">Fig. 3 · T = 307.85 K</span>
@@ -558,7 +547,7 @@
               <div class="aad-panel">
                 <div class="aad-title">
                   <h4>AAD % Densidad</h4>
-                  <span id="aad-scope-label">30 puntos Tabla 4</span>
+                  <span>Tabla 4 (30 puntos)</span>
                 </div>
                 <div class="aad-row">
                   <span class="aad-label" style="color:var(--orange-deep);">IR EOS</span>
@@ -575,66 +564,79 @@
                   <div class="aad-track"><div class="aad-fill" id="bar-pr" style="background:var(--slate); width:0%"></div></div>
                   <span class="aad-val" id="aad-pr">—</span>
                 </div>
-                <div class="aad-row">
-                  <span class="aad-label" style="color:var(--danger);">GMA EOS*</span>
-                  <div class="aad-track"><div class="aad-fill" id="bar-gma" style="background:#CBD5E1; border:1.5px dashed var(--danger); width:0%"></div></div>
-                  <span class="aad-val" id="aad-gma">—</span>
-                </div>
-                <div id="aad-footnote" style="margin-top:8px; font-family:var(--font-mono); font-size:10.5px; color:var(--ink-muted); border-top:1px solid var(--grid-major); padding-top:6px;">
-                  Global 615 pts: IR 0.397% · GERG 2.36% · PR 6.316%
+                <div style="margin-top:10px; font-family:var(--font-mono); font-size:10.5px; color:var(--ink-muted); border-top:1px solid var(--grid-major); padding-top:7px;">
+                  Contraste visual de GMA disponible en la pestaña Fig. 1
                 </div>
               </div>
 
               <div class="summary-mini-card">
                 <div class="summary-kv"><span>Criterio de Error</span><strong>$\frac{1}{N}\sum |\Delta\rho/\rho_{\text{exp}}|$</strong></div>
-                <div class="summary-kv"><span>Modelo IR EOS</span><strong>Correlativo (9 const.)</strong></div>
-                <div class="summary-kv"><span>Sin raíz (GMA)</span><strong id="gma-fail-count" style="color:var(--danger);">7 / 30 pts</strong></div>
+                <div class="summary-kv"><span>Global Densidad (615 pts)</span><strong>0.397% · 2.36% · 6.32%</strong></div>
+                <div class="summary-kv"><span>Global $C_p$ (79 pts)</span><strong>1.95% · 2.02% · 5.51%</strong></div>
               </div>
-            </div>
-          </div>
-
-          <!-- Modal: Código JS -->
-          <div class="lab-modal" id="modal-code">
-            <div class="lab-modal-head">
-              <h4>Implementación en JavaScript · Solver IR EOS + Constantes Ajustadas</h4>
-              <button class="action-btn" data-close-modal="modal-code">Cerrar ✕</button>
-            </div>
-            <pre class="code-block" id="code-snippet-box"></pre>
-            <div>
-              <div style="font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--navy); margin-bottom:6px;">
-                Constantes recuperadas por QR en vivo (<span id="modal-coeffs-scope">30 pts Tabla 4</span>):
-              </div>
-              <div class="coeffs-grid" id="modal-coeffs-grid"></div>
             </div>
           </div>
 
           <!-- Modal: Composición N. gas 11 -->
           <div class="lab-modal" id="modal-comp">
             <div class="lab-modal-head">
-              <h4>Composición N. gas 11 (Tabla 1 · Barreau et al., 1996) &amp; Parámetros Críticos (PR)</h4>
+              <h4>Composición N. gas 11 (Tabla 1 · Barreau et al., 1996)</h4>
               <button class="action-btn" data-close-modal="modal-comp">Cerrar ✕</button>
             </div>
             <table class="comp-table" id="comp-table-body"></table>
           </div>
 
+          <!-- Modal: Resumen Global (Tablas 2, 3 y 5) -->
+          <div class="lab-modal" id="modal-global">
+            <div class="lab-modal-head">
+              <h4>Resumen Global del Artículo · Tablas 2, 3 y 5 (615 pts Densidad · 79 pts $C_p$)</h4>
+              <button class="action-btn" data-close-modal="modal-global">Cerrar ✕</button>
+            </div>
+            <div style="overflow:auto; display:grid; grid-template-columns: 1.35fr 0.65fr; gap:16px;">
+              <div>
+                <div style="font-family:var(--font-mono); font-size:11.5px; font-weight:700; color:var(--navy); margin-bottom:6px;">TABLA 2 · % AAD DENSIDAD POR MEZCLA (14 SISTEMAS)</div>
+                <table class="comp-table compact-table" id="global-table2-body"></table>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <div>
+                  <div style="font-family:var(--font-mono); font-size:11.5px; font-weight:700; color:var(--navy); margin-bottom:6px;">TABLA 3 · % AAD CAPACIDAD CALORÍFICA ($C_p$)</div>
+                  <table class="comp-table compact-table" id="global-table3-body"></table>
+                </div>
+                <div>
+                  <div style="font-family:var(--font-mono); font-size:11.5px; font-weight:700; color:var(--navy); margin-bottom:6px;">TABLA 5 · RESUMEN GLOBAL (AAD % Y RMSE)</div>
+                  <table class="comp-table compact-table" id="global-table5-body"></table>
+                </div>
+              </div>
+            </div>
+            <div class="modal-legend" aria-label="Leyenda de variables del resumen global">
+              <span><strong>ΔT (K):</strong> rango térmico</span>
+              <span><strong>ΔP (MPa):</strong> rango de presión</span>
+              <span><strong>N<sub>p</sub>:</strong> puntos experimentales</span>
+              <span><strong>AAD (%):</strong> desviación absoluta media</span>
+              <span><strong>RMSE:</strong> raíz del error cuadrático medio</span>
+              <span><strong>C<sub>p</sub>:</strong> capacidad calorífica isobárica</span>
+              <span><strong>ERROR:</strong> sin resultado reportado en GERG</span>
+            </div>
+          </div>
+
           <!-- Modal: Notas Críticas -->
           <div class="lab-modal" id="modal-critique">
             <div class="lab-modal-head">
-              <h4>Lectura Crítica y Criterios Metodológicos</h4>
+              <h4>Lectura Crítica y Auditoría de los Datos del Artículo</h4>
               <button class="action-btn" data-close-modal="modal-critique">Cerrar ✕</button>
             </div>
             <div style="display:grid; gap:12px; font-size:14.5px; line-height:1.5; color:var(--ink);">
               <div class="mini-pill-card">
-                <strong>1. Cálculo del error e “Isoterma Oculta”</strong>
-                Cada modelo reporta la desviación relativa frente a $\rho_{\text{exp}}$ y el promedio absoluto (AAD %). Al activar <em>Isoterma Oculta</em>, la temperatura elegida se excluye del ajuste QR (solo calibra con las otras 4 isotermas) para validar su capacidad predictiva fuera de muestra.
+                <strong>1. Modelo correlativo vs. predictivos</strong>
+                IR EOS ajusta 9 constantes $(A_0\dots C_2)$ a los datos de cada mezcla (publicadas en material suplementario); PR EOS y GERG-2008 predicen sin ajuste específico a la muestra.
               </div>
               <div class="mini-pill-card">
-                <strong>2. Correlativo vs. Predictivo</strong>
-                IR EOS ajusta 9 constantes específicas a los datos de la mezcla; PR y GERG-2008 predicen sin ajuste local.
+                <strong>2. Discrepancia interna entre Tabla 2 y Tabla 4 (N. gas 11)</strong>
+                En la Tabla 2, la fila de <em>N. gas 11</em> reporta AAD de <strong>0.03%</strong> (IR), <strong>5.27%</strong> (PR) y <strong>2.33%</strong> (GERG); sin embargo, el promedio directo de los 30 puntos de su propia Tabla 4 arroja <strong>0.15%</strong>, <strong>5.19%</strong> y <strong>1.90%</strong> respectivamente.
               </div>
               <div class="mini-pill-card warn">
-                <strong>3. Anomalía en GERG-2008 y ruptura de GMA</strong>
-                El 1.90% reportado para GERG en Tabla 4 (y celdas <code>ERROR</code> en Tabla 2) es inusual para ~90% CH₄, donde GERG suele lograr ~0.1%. GMA falla sin raíz real en 7/30 puntos.
+                <strong>3. Anomalía en GERG-2008 y ausencia numérica de GMA</strong>
+                El 1.90%–2.33% reportado para GERG en una mezcla con ~90% CH₄ (y celdas <code>ERROR</code> en Tabla 2) es atípicamente alto frente a implementaciones estándar como NIST REFPROP (~0.1%). Por su parte, GMA solo se muestra cualitativamente en las Figs. 1–2.
               </div>
             </div>
           </div>
@@ -819,7 +821,7 @@
                 <circle cx="40" cy="44" r="4" fill="#14284B" />
               </svg>
               <h4>Logro Industrial</h4>
-              <p>Precisión en densidad (<strong>0.397%</strong> AAD global; <strong>0.19%</strong> en nuestro cálculo sobre N. gas 11) con rapidez cuasi-cúbica apta para tiempo real.</p>
+              <p>Precisión en densidad (<strong>0.397%</strong> AAD global; <strong>0.15%</strong> en Tabla 4 de N. gas 11) con rapidez cuasi-cúbica apta para tiempo real.</p>
             </div>
 
             <div class="pillar-card">

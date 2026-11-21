@@ -96,4 +96,29 @@ window.IR_DATA = {
       pr: { aad: 5.51, rmse: 5.87 },
     },
   },
+
+  // Tabla 2 completa: % AAD de densidad por mezcla reportado en el artículo
+  table2: [
+    { comp: "N. gas 1",  T: "270–340", P: "3.5–35",  state: "Gas",    np: 32,  ir: "0.36",  pr: "2.32",  gerg: "0.16" },
+    { comp: "N. gas 2",  T: "270–340", P: "3.5–35",  state: "Gas",    np: 24,  ir: "0.15",  pr: "6.90",  gerg: "3.49" },
+    { comp: "N. gas 3",  T: "250–450", P: "0.6–38",  state: "Gas",    np: 58,  ir: "0.09",  pr: "1.90",  gerg: "0.09" },
+    { comp: "N. gas 4",  T: "250–450", P: "10–150",  state: "Gas",    np: 20,  ir: "0.22",  pr: "9.70",  gerg: "ERROR" },
+    { comp: "N. gas 5",  T: "300–450", P: "1–190",   state: "Gas",    np: 76,  ir: "3.38",  pr: "7.97",  gerg: "ERROR" },
+    { comp: "N. gas 6",  T: "300–400", P: "5–140",   state: "Gas",    np: 40,  ir: "0.66",  pr: "3.77",  gerg: "0.02" },
+    { comp: "N. gas 7",  T: "250–450", P: "10–150",  state: "Gas",    np: 49,  ir: "0.19",  pr: "3.85",  gerg: "0.16" },
+    { comp: "N. gas 8",  T: "225–350", P: "3.5–70",  state: "Gas",    np: 103, ir: "0.006", pr: "7.12",  gerg: "0.04" },
+    { comp: "N. gas 9",  T: "225–350", P: "3.5–70",  state: "Gas",    np: 103, ir: "0.005", pr: "7.09",  gerg: "0.10" },
+    { comp: "N. gas 10", T: "225–350", P: "3.5–70",  state: "Gas",    np: 103, ir: "0.01",  pr: "10.72", gerg: "0.10" },
+    { comp: "N. gas 11", T: "305–410", P: "15–40",   state: "Gas",    np: 30,  ir: "0.03",  pr: "5.27",  gerg: "2.33" },
+    { comp: "N. gas 12", T: "305–410", P: "15–40",   state: "Gas",    np: 30,  ir: "0.05",  pr: "6.82",  gerg: "3.27" },
+    { comp: "LNG 1",     T: "305–410", P: "30–40",   state: "Liquid", np: 25,  ir: "0.06",  pr: "11.04", gerg: "14.34" },
+    { comp: "LNG 2",     T: "300–375", P: "3–38",    state: "Liquid", np: 25,  ir: "0.35",  pr: "3.96",  gerg: "4.24" },
+  ],
+
+  // Tabla 3: % AAD de capacidad calorífica Cp reportado en el artículo
+  table3: [
+    { comp: "N. gas 11", T: "305–410", P: "15–40", state: "Gas",    np: 30, ir: "1.50", pr: "1.05",  gerg: "0.76" },
+    { comp: "N. gas 12", T: "305–410", P: "15–40", state: "Gas",    np: 24, ir: "1.99", pr: "1.28",  gerg: "0.51" },
+    { comp: "LNG 1",     T: "305–410", P: "30–40", state: "Liquid", np: 25, ir: "2.37", pr: "14.20", gerg: "4.79" },
+  ],
 };

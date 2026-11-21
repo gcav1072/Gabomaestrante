@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  const { meta, components, paperBenchmarks, R } = window.IR_DATA;
-  const { buildScenario, IR_SOLVER_SNIPPET } = window.IR_CALC;
+  const { meta, components, paperBenchmarks, table2, table3, R } = window.IR_DATA;
+  const { buildPaperDataset } = window.IR_CALC;
 
   /* ==================== 1. PREZI CAMERA & STEPS ==================== */
   const STEPS = [
@@ -62,11 +62,11 @@
     {
       id: "lab",
       badge: "4",
-      label: "4. Lab en Vivo",
+      label: "4. Resultados",
       target: "#frame-4",
       pad: 0.92,
       cue: "04:45 – 07:45",
-      notes: "Ejercicio en vivo sobre los 30 puntos de la Tabla 4 (N. gas 11). Si necesitas explicar el detalle metodológico o la anomalía de GERG (1.90%), abre el botón discreto 'Notas Críticas'. Activa 'Isoterma Oculta' para demostrar predicción fuera de muestra.",
+      notes: "Explorador de los 30 puntos reportados en la Tabla 4 (N. gas 11). Compara los 3 modelos tabulados (IR EOS 0.15%, GERG-2008 1.90%, PR 5.19%), usa 'Contraste GMA (Fig. 1)' para ilustrar las Figs. 1 vs. 3 y abre 'Resumen Global' para los 615 puntos.",
     },
     {
       id: "uses",
@@ -347,22 +347,19 @@
 
   window.addEventListener("resize", () => goToStep(currentStep, false));
 
-  /* ==================== 3. LABORATORIO JS (FRAME 4) ==================== */
+  /* ==================== 3. EXPLORADOR DE DATOS DEL PAPER (FRAME 4) ==================== */
   const TEMPS = [307.85, 332.45, 356.95, 381.55, 406.25];
-  const PRESSURES = [14.92, 19.95, 24.95, 29.97, 35.00, 40.03]; // ascendente para slider
+  const PRESSURES = [14.92, 19.95, 24.95, 29.97, 35.00, 40.03];
 
   let selectedTemp = 307.85;
-  let selectedPressIdx = 5; // 40.03 MPa por defecto (donde más diverge PR)
-  let hiddenMode = false;
+  let selectedPressIdx = 5; // 40.03 MPa por defecto
   let activeChart = "reg-ir";
-  let scenario = buildScenario(null);
+  const dataset = buildPaperDataset();
 
   const isoButtonsEl = document.getElementById("iso-buttons");
   const pressButtonsEl = document.getElementById("press-buttons");
   const pressSlider = document.getElementById("press-slider");
-  const btnHiddenIso = document.getElementById("btn-hidden-iso");
 
-  // Render buttons
   TEMPS.forEach((T) => {
     const b = document.createElement("button");
     b.className = "pill-btn orange-active";
@@ -370,7 +367,6 @@
     b.dataset.temp = String(T);
     b.addEventListener("click", () => {
       selectedTemp = T;
-      if (hiddenMode) scenario = buildScenario(selectedTemp);
       renderLab();
     });
     isoButtonsEl.appendChild(b);
@@ -394,14 +390,6 @@
     renderLab();
   });
 
-  btnHiddenIso.addEventListener("click", () => {
-    hiddenMode = !hiddenMode;
-    btnHiddenIso.classList.toggle("toggle-on", hiddenMode);
-    btnHiddenIso.textContent = `Isoterma Oculta: ${hiddenMode ? "ON" : "OFF"}`;
-    scenario = buildScenario(hiddenMode ? selectedTemp : null);
-    renderLab();
-  });
-
   document.querySelectorAll(".tab-btn").forEach((tab) => {
     tab.addEventListener("click", () => {
       activeChart = tab.dataset.chart;
@@ -410,15 +398,12 @@
     });
   });
 
-  // Modales Código, Composición y Notas Críticas
-  const modalCode = document.getElementById("modal-code");
+  // Modales: Composición, Resumen Global (Tablas 2/3/5) y Notas Críticas
   const modalComp = document.getElementById("modal-comp");
+  const modalGlobal = document.getElementById("modal-global");
   const modalCritique = document.getElementById("modal-critique");
-  document.getElementById("code-snippet-box").textContent = IR_SOLVER_SNIPPET;
 
-  // Poblar tabla de composición Tabla 1
-  const compTable = document.getElementById("comp-table-body");
-  compTable.innerHTML = `
+  document.getElementById("comp-table-body").innerHTML = `
     <thead>
       <tr>
         <th>Componente</th><th>% Molar (Tabla 1)</th><th>Tc [K]</th><th>Pc [MPa]</th><th>Factor acéntrico ω</th>
@@ -439,15 +424,66 @@
     </tbody>
   `;
 
+  document.getElementById("global-table2-body").innerHTML = `
+    <thead>
+      <tr>
+        <th>Mezcla</th><th>ΔT (K)</th><th>ΔP (MPa)</th><th>Estado</th><th>N<sub>p</sub></th><th>IR EOS</th><th>PR EOS</th><th>GERG-2008</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${table2
+        .map(
+          (r) => `<tr style="${r.comp === "N. gas 11" ? "background:var(--orange-soft); font-weight:700;" : ""}">
+            <td>${r.comp}</td><td>${r.T}</td><td>${r.P}</td><td>${r.state}</td><td>${r.np}</td>
+            <td style="color:var(--orange-deep); font-weight:700;">${r.ir}%</td><td>${r.pr}%</td><td>${r.gerg === "ERROR" ? "<span style='color:var(--danger);font-weight:700;'>ERROR</span>" : `${r.gerg}%`}</td>
+          </tr>`
+        )
+        .join("")}
+      <tr style="background:var(--navy-soft); font-weight:800;">
+        <td colspan="4">Promedio Global</td><td>615</td><td style="color:var(--orange-deep);">0.397%</td><td>6.316%</td><td>2.36%</td>
+      </tr>
+    </tbody>
+  `;
+
+  document.getElementById("global-table3-body").innerHTML = `
+    <thead>
+      <tr><th>Mezcla</th><th>N<sub>p</sub></th><th>IR EOS</th><th>PR EOS</th><th>GERG-2008</th></tr>
+    </thead>
+    <tbody>
+      ${table3
+        .map(
+          (r) => `<tr><td>${r.comp}</td><td>${r.np}</td><td style="color:var(--orange-deep);font-weight:700;">${r.ir}%</td><td>${r.pr}%</td><td>${r.gerg}%</td></tr>`
+        )
+        .join("")}
+      <tr style="background:var(--navy-soft); font-weight:800;">
+        <td>Promedio</td><td>79</td><td style="color:var(--orange-deep);">1.95%</td><td>5.51%</td><td>2.02%</td>
+      </tr>
+    </tbody>
+  `;
+
+  document.getElementById("global-table5-body").innerHTML = `
+    <thead>
+      <tr><th>Propiedad</th><th>Modelo</th><th>AAD (%)</th><th>RMSE</th></tr>
+    </thead>
+    <tbody>
+      <tr><td rowspan="3"><strong>Densidad</strong></td><td>IR EOS</td><td style="color:var(--orange-deep);font-weight:700;">${paperBenchmarks.densityGlobal.ir.aad}%</td><td>${paperBenchmarks.densityGlobal.ir.rmse}</td></tr>
+      <tr><td>PR EOS</td><td>${paperBenchmarks.densityGlobal.pr.aad}%</td><td>${paperBenchmarks.densityGlobal.pr.rmse}</td></tr>
+      <tr><td>GERG</td><td>${paperBenchmarks.densityGlobal.gerg.aad}%</td><td>${paperBenchmarks.densityGlobal.gerg.rmse}</td></tr>
+      <tr><td rowspan="3"><strong>Cap. Calorífica (Cp)</strong></td><td>IR EOS</td><td style="color:var(--orange-deep);font-weight:700;">${paperBenchmarks.cpGlobal.ir.aad}%</td><td>${paperBenchmarks.cpGlobal.ir.rmse}</td></tr>
+      <tr><td>PR EOS</td><td>${paperBenchmarks.cpGlobal.pr.aad}%</td><td>${paperBenchmarks.cpGlobal.pr.rmse}</td></tr>
+      <tr><td>GERG</td><td>${paperBenchmarks.cpGlobal.gerg.aad}%</td><td>${paperBenchmarks.cpGlobal.gerg.rmse}</td></tr>
+    </tbody>
+  `;
+
   function toggleLabModal(targetModal) {
-    [modalCode, modalComp, modalCritique].forEach((m) => {
+    [modalComp, modalGlobal, modalCritique].forEach((m) => {
       if (m === targetModal) m.classList.toggle("open");
       else m.classList.remove("open");
     });
   }
 
-  document.getElementById("btn-code").addEventListener("click", () => toggleLabModal(modalCode));
   document.getElementById("btn-comp").addEventListener("click", () => toggleLabModal(modalComp));
+  document.getElementById("btn-global").addEventListener("click", () => toggleLabModal(modalGlobal));
   document.getElementById("btn-critique").addEventListener("click", () => toggleLabModal(modalCritique));
   document.querySelectorAll("[data-close-modal]").forEach((b) => {
     b.addEventListener("click", () => {
@@ -456,7 +492,6 @@
   });
 
   function formatErr(err) {
-    if (err === null || !Number.isFinite(err)) return { text: "Sin raíz física en fase gas", cls: "high" };
     const abs = Math.abs(err);
     const sign = err >= 0 ? "+" : "−";
     const cls = abs < 0.6 ? "low" : abs < 2.5 ? "mid" : "high";
@@ -464,89 +499,48 @@
   }
 
   function renderLab() {
-    // Active pills
     [...isoButtonsEl.children].forEach((b) => b.classList.toggle("active", parseFloat(b.dataset.temp) === selectedTemp));
     [...pressButtonsEl.children].forEach((b) => b.classList.toggle("active", parseInt(b.dataset.pidx, 10) === selectedPressIdx));
 
     const P = PRESSURES[selectedPressIdx];
-    const pt = scenario.points.find((d) => Math.abs(d.T - selectedTemp) < 1e-3 && Math.abs(d.P - P) < 1e-2);
+    const pt = dataset.points.find((d) => Math.abs(d.T - selectedTemp) < 1e-3 && Math.abs(d.P - P) < 1e-2);
     if (!pt) return;
 
     document.getElementById("lab-state-tag").textContent = `T = ${pt.T.toFixed(2)} K · P = ${pt.P.toFixed(2)} MPa`;
     document.getElementById("val-rho-exp").textContent = pt.rhoExp.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     document.getElementById("val-z-exp").textContent = pt.Zexp.toFixed(4);
 
-    // IR Card
-    document.getElementById("tag-ir-mode").textContent = hiddenMode ? "Oculta (24 pts)" : "En vivo";
-    document.getElementById("val-ir").textContent = `${pt.rhoIR.toFixed(1)} mol/m³`;
+    // Tarjeta IR EOS (Tabla 4)
+    document.getElementById("val-ir").textContent = `${pt.rhoIR_paper.toFixed(1)} mol/m³`;
     const eIR = formatErr(pt.errIR);
     const errIrEl = document.getElementById("err-ir");
     errIrEl.textContent = eIR.text;
     errIrEl.className = `mc-err ${eIR.cls}`;
-    document.getElementById("sub-ir").textContent = `Paper: ${pt.rhoIR_paper.toFixed(1)}`;
 
-    // GERG Card
+    // Tarjeta GERG-2008 (Tabla 4)
     document.getElementById("val-gerg").textContent = `${pt.rhoGERG_paper.toFixed(1)} mol/m³`;
     const eGerg = formatErr(pt.errGERG);
     const errGergEl = document.getElementById("err-gerg");
     errGergEl.textContent = eGerg.text;
     errGergEl.className = `mc-err ${eGerg.cls}`;
 
-    // PR Card
-    document.getElementById("val-pr").textContent = `${pt.rhoPR.toFixed(1)} mol/m³`;
+    // Tarjeta PR EOS (Tabla 4)
+    document.getElementById("val-pr").textContent = `${pt.rhoPR_paper.toFixed(1)} mol/m³`;
     const ePR = formatErr(pt.errPR);
     const errPrEl = document.getElementById("err-pr");
     errPrEl.textContent = ePR.text;
     errPrEl.className = `mc-err ${ePR.cls}`;
-    document.getElementById("sub-pr").textContent = `Paper: ${pt.rhoPR_paper.toFixed(1)}`;
 
-    // GMA Card
-    const valGmaEl = document.getElementById("val-gma");
-    const errGmaEl = document.getElementById("err-gma");
-    const subGmaEl = document.getElementById("sub-gma");
-    if (pt.rhoGMA === null) {
-      valGmaEl.textContent = "Sin solución real";
-      valGmaEl.classList.add("no-root");
-      errGmaEl.textContent = "Recta GMA no corta P–ρ";
-      errGmaEl.className = "mc-err high";
-      subGmaEl.textContent = "Colapso en fase gas";
-    } else {
-      valGmaEl.textContent = `${pt.rhoGMA.toFixed(1)} mol/m³`;
-      valGmaEl.classList.remove("no-root");
-      const eGma = formatErr(pt.errGMA);
-      errGmaEl.textContent = eGma.text;
-      errGmaEl.className = `mc-err ${eGma.cls}`;
-      subGmaEl.textContent = "Lineal en isoterma";
-    }
-
-    // AAD Bars
-    const m = scenario.metrics;
-    document.getElementById("aad-scope-label").textContent = m.scopeLabel;
-    const maxAAD = Math.max(10.5, m.gma.aad || 10, m.pr.aad || 6);
-    const setBar = (idBar, idVal, val, suffix = "") => {
+    // Barras AAD % de la Tabla 4
+    const m = dataset.metrics;
+    const maxAAD = Math.max(6.5, m.pr.aad);
+    const setBar = (idBar, idVal, val) => {
       document.getElementById(idBar).style.width = `${Math.min(100, (val / maxAAD) * 100)}%`;
-      document.getElementById(idVal).textContent = `${val.toFixed(2)}%${suffix}`;
+      document.getElementById(idVal).textContent = `${val.toFixed(2)}%`;
     };
     setBar("bar-ir", "aad-ir", m.ir.aad);
-    setBar("bar-gerg", "aad-gerg", m.gergPaper.aad);
+    setBar("bar-gerg", "aad-gerg", m.gerg.aad);
     setBar("bar-pr", "aad-pr", m.pr.aad);
-    if (m.gma.aad !== null) {
-      setBar("bar-gma", "aad-gma", m.gma.aad, "*");
-    } else {
-      document.getElementById("bar-gma").style.width = "100%";
-      document.getElementById("aad-gma").textContent = "Falló";
-    }
-
-    document.getElementById("gma-fail-count").textContent = `${m.gmaNoRootCount} / ${m.totalPoints} pts`;
-    document.getElementById("aad-footnote").textContent =
-      `*Global paper (615 pts): IR ${paperBenchmarks.densityGlobal.ir.aad}% · GERG ${paperBenchmarks.densityGlobal.gerg.aad}% · PR ${paperBenchmarks.densityGlobal.pr.aad}%`;
-
-    // Update coeffs in code modal
-    const names = ["A₀", "A₁", "A₂", "B₀", "B₁", "B₂", "C₀", "C₁", "C₂"];
-    document.getElementById("modal-coeffs-scope").textContent = m.scopeLabel;
-    document.getElementById("modal-coeffs-grid").innerHTML = scenario.irCoeffs
-      .map((c, idx) => `<div class="coeff-chip"><strong>${names[idx]}</strong> = ${c.toExponential(5)}</div>`)
-      .join("");
 
     renderLabChart();
   }
@@ -554,7 +548,7 @@
   function renderLabChart() {
     const holder = document.getElementById("lab-svg-holder");
     const noteEl = document.getElementById("chart-note");
-    const isoPts = scenario.points
+    const isoPts = dataset.points
       .filter((d) => Math.abs(d.T - selectedTemp) < 1e-3)
       .sort((a, b) => a.P - b.P);
     const activeP = PRESSURES[selectedPressIdx];
@@ -572,23 +566,14 @@
     let svgBody = "";
 
     if (activeChart === "reg-ir") {
-      noteEl.textContent = `Fig. 3 · T = ${selectedTemp} K (${hiddenMode ? "predicha" : "ajustada"})`;
-      const params = scenario.evalIRParams(selectedTemp);
+      noteEl.textContent = `Fig. 3 · T = ${selectedTemp} K (datos Tabla 4)`;
       const rMin = Math.min(...isoPts.map((d) => d.rhoExp)) * 0.92;
       const rMax = Math.max(...isoPts.map((d) => d.rhoExp)) * 1.04;
 
-      const curve = [];
-      for (let i = 0; i <= 80; i++) {
-        const r = rMin + (i / 80) * (rMax - rMin);
-        const val = params.C + params.B / r + params.A / (r * r);
-        curve.push([r, val]);
-      }
-
-      const allY = [...isoPts.map((d) => d.regIR_exp), ...curve.map((c) => c[1]), 0];
+      const allY = [...isoPts.map((d) => d.regIR_exp), ...isoPts.map((d) => d.regIR_paper), 0];
       const yMin = Math.min(...allY) * 1.08;
       const yMax = Math.max(...allY, 0.2e-12);
 
-      // Grid & ticks
       for (let i = 0; i <= 4; i++) {
         const yv = yMin + (i / 4) * (yMax - yMin);
         const yp = mapY(yv, yMin, yMax);
@@ -602,32 +587,30 @@
         svgBody += `<text x="${xp}" y="${H - pad.b + 16}" text-anchor="middle" fill="#475569" font-family="JetBrains Mono, monospace" font-size="10.5">${Math.round(xv)}</text>`;
       }
 
-      const pathD = curve
-        .map(([r, v], idx) => `${idx === 0 ? "M" : "L"}${mapX(r, rMin, rMax).toFixed(1)},${mapY(v, yMin, yMax).toFixed(1)}`)
+      const irPath = isoPts
+        .map((d, idx) => `${idx === 0 ? "M" : "L"}${mapX(d.rhoIR_paper, rMin, rMax).toFixed(1)},${mapY(d.regIR_paper, yMin, yMax).toFixed(1)}`)
         .join(" ");
-      svgBody += `<path d="${pathD}" fill="none" stroke="#E07B39" stroke-width="3" />`;
+      svgBody += `<path d="${irPath}" fill="none" stroke="#E07B39" stroke-width="3" />`;
 
       isoPts.forEach((d) => {
         const cx = mapX(d.rhoExp, rMin, rMax);
         const cy = mapY(d.regIR_exp, yMin, yMax);
-        const isSel = d === activePt;
-        if (isSel) {
+        if (d === activePt) {
           svgBody += `<circle cx="${cx}" cy="${cy}" r="11" fill="#FFF4EC" stroke="#E07B39" stroke-width="2.5" />`;
         }
         svgBody += `<circle cx="${cx}" cy="${cy}" r="5" fill="#14284B" stroke="#FFFFFF" stroke-width="1.5" />`;
       });
 
-      // Legend & Axis labels
       svgBody += `<text x="${pad.l + pw / 2}" y="${H - 8}" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="12.5" font-weight="700">Densidad molar ρ (mol/m³)</text>`;
       svgBody += `<text x="18" y="${pad.t + ph / 2}" text-anchor="middle" transform="rotate(-90 18 ${pad.t + ph / 2})" fill="#14284B" font-family="Inter, sans-serif" font-size="12.5" font-weight="700">(Z − 1)ν³  [m⁹/mol³]</text>`;
       svgBody += `<g transform="translate(${W - 220}, ${pad.t + 8})">
         <rect width="190" height="44" rx="5" fill="#FFF" stroke="#CBD5E1" />
-        <line x1="10" y1="15" x2="32" y2="15" stroke="#E07B39" stroke-width="3" /><text x="38" y="19" font-size="11.5" fill="#111827" font-weight="700">Curva IR EOS</text>
+        <line x1="10" y1="15" x2="32" y2="15" stroke="#E07B39" stroke-width="3" /><text x="38" y="19" font-size="11.5" fill="#111827" font-weight="700">IR EOS (Tabla 4)</text>
         <circle cx="21" cy="31" r="4.5" fill="#14284B" /><text x="38" y="35" font-size="11.5" fill="#111827">Exp. Tabla 4</text>
       </g>`;
     } else if (activeChart === "reg-gma") {
-      noteEl.textContent = `Fig. 1 · Falla lineal GMA (T = ${selectedTemp} K)`;
-      const gma = scenario.gmaByTemp[selectedTemp];
+      noteEl.textContent = `Fig. 1 · Ruptura lineal GMA en gas (T = ${selectedTemp} K)`;
+      const gma = dataset.gmaLineByTemp[selectedTemp];
       const rMin = Math.min(...isoPts.map((d) => d.rhoExp)) * 0.92;
       const rMax = Math.max(...isoPts.map((d) => d.rhoExp)) * 1.04;
 
@@ -665,14 +648,14 @@
       svgBody += `<text x="18" y="${pad.t + ph / 2}" text-anchor="middle" transform="rotate(-90 18 ${pad.t + ph / 2})" fill="#14284B" font-family="Inter, sans-serif" font-size="12.5" font-weight="700">(2Z − 1)ν³  [m⁹/mol³]</text>`;
       svgBody += `<g transform="translate(${W - 235}, ${pad.t + 8})">
         <rect width="205" height="44" rx="5" fill="#FFF" stroke="#CBD5E1" />
-        <line x1="10" y1="15" x2="32" y2="15" stroke="#B91C1C" stroke-width="2.5" stroke-dasharray="5 3" /><text x="38" y="19" font-size="11.5" fill="#B91C1C" font-weight="700">Ajuste lineal GMA</text>
+        <line x1="10" y1="15" x2="32" y2="15" stroke="#B91C1C" stroke-width="2.5" stroke-dasharray="5 3" /><text x="38" y="19" font-size="11.5" fill="#B91C1C" font-weight="700">Recta lineal (GMA)</text>
         <circle cx="21" cy="31" r="4.5" fill="#14284B" /><text x="38" y="35" font-size="11.5" fill="#111827">Curva real (Exp.)</text>
       </g>`;
     } else {
-      noteEl.textContent = `ρ vs P · T = ${selectedTemp} K (4 modelos)`;
+      noteEl.textContent = `ρ vs P · T = ${selectedTemp} K (datos Tabla 4)`;
       const pMin = 13.5;
       const pMax = 41.5;
-      const allRho = isoPts.flatMap((d) => [d.rhoExp, d.rhoIR, d.rhoPR, d.rhoGERG_paper, d.rhoGMA].filter((v) => v !== null));
+      const allRho = isoPts.flatMap((d) => [d.rhoExp, d.rhoIR_paper, d.rhoPR_paper, d.rhoGERG_paper]);
       const yMin = Math.min(...allRho) * 0.90;
       const yMax = Math.max(...allRho) * 1.05;
 
@@ -688,44 +671,33 @@
         svgBody += `<text x="${xp}" y="${H - pad.b + 16}" text-anchor="middle" fill="#475569" font-family="JetBrains Mono, monospace" font-size="10.5">${pv.toFixed(1)}</text>`;
       });
 
-      // Vertical marker at active pressure
       const actX = mapX(activeP, pMin, pMax);
       svgBody += `<line x1="${actX}" y1="${pad.t}" x2="${actX}" y2="${H - pad.b}" stroke="#E07B39" stroke-width="1.8" stroke-dasharray="4 3" opacity="0.7" />`;
 
-      // PR smooth curve
-      const prPts = [];
-      const irPts = [];
-      for (let i = 0; i <= 50; i++) {
-        const pv = 14.92 + (i / 50) * (40.03 - 14.92);
-        prPts.push(`${i === 0 ? "M" : "L"}${mapX(pv, pMin, pMax).toFixed(1)},${mapY(scenario.solvePengRobinson(selectedTemp, pv), yMin, yMax).toFixed(1)}`);
-        irPts.push(`${i === 0 ? "M" : "L"}${mapX(pv, pMin, pMax).toFixed(1)},${mapY(scenario.solveIRDensity(selectedTemp, pv), yMin, yMax).toFixed(1)}`);
-      }
-      svgBody += `<path d="${prPts.join(" ")}" fill="none" stroke="#6B7280" stroke-width="2.5" />`;
+      const prPath = isoPts.map((d, i) => `${i === 0 ? "M" : "L"}${mapX(d.P, pMin, pMax).toFixed(1)},${mapY(d.rhoPR_paper, yMin, yMax).toFixed(1)}`).join(" ");
       const gergPath = isoPts.map((d, i) => `${i === 0 ? "M" : "L"}${mapX(d.P, pMin, pMax).toFixed(1)},${mapY(d.rhoGERG_paper, yMin, yMax).toFixed(1)}`).join(" ");
+      const irPath = isoPts.map((d, i) => `${i === 0 ? "M" : "L"}${mapX(d.P, pMin, pMax).toFixed(1)},${mapY(d.rhoIR_paper, yMin, yMax).toFixed(1)}`).join(" ");
+
+      svgBody += `<path d="${prPath}" fill="none" stroke="#6B7280" stroke-width="2.5" />`;
       svgBody += `<path d="${gergPath}" fill="none" stroke="#14284B" stroke-width="2" stroke-dasharray="6 4" />`;
-      svgBody += `<path d="${irPts.join(" ")}" fill="none" stroke="#E07B39" stroke-width="3" />`;
+      svgBody += `<path d="${irPath}" fill="none" stroke="#E07B39" stroke-width="3" />`;
 
       isoPts.forEach((d) => {
         const cx = mapX(d.P, pMin, pMax);
         svgBody += `<circle cx="${cx}" cy="${mapY(d.rhoExp, yMin, yMax)}" r="4.5" fill="#14284B" stroke="#FFF" stroke-width="1.2" />`;
-        if (d.rhoGMA !== null) {
-          const gy = mapY(d.rhoGMA, yMin, yMax);
-          svgBody += `<path d="M${cx - 4},${gy - 4} L${cx + 4},${gy + 4} M${cx + 4},${gy - 4} L${cx - 4},${gy + 4}" stroke="#B91C1C" stroke-width="2" />`;
-        }
       });
 
       svgBody += `<text x="${pad.l + pw / 2}" y="${H - 8}" text-anchor="middle" fill="#14284B" font-family="Inter, sans-serif" font-size="12.5" font-weight="700">Presión P (MPa)</text>`;
       svgBody += `<text x="18" y="${pad.t + ph / 2}" text-anchor="middle" transform="rotate(-90 18 ${pad.t + ph / 2})" fill="#14284B" font-family="Inter, sans-serif" font-size="12.5" font-weight="700">Densidad ρ (mol/m³)</text>`;
       svgBody += `<g transform="translate(${pad.l + 12}, ${pad.t + 6})">
-        <rect width="175" height="82" rx="5" fill="#FFF" fill-opacity="0.94" stroke="#CBD5E1" />
-        <line x1="10" y1="16" x2="30" y2="16" stroke="#E07B39" stroke-width="3" /><text x="36" y="20" font-size="11" fill="#111827" font-weight="700">IR EOS</text>
+        <rect width="192" height="82" rx="5" fill="#FFF" fill-opacity="0.94" stroke="#CBD5E1" />
+        <line x1="10" y1="16" x2="30" y2="16" stroke="#E07B39" stroke-width="3" /><text x="36" y="20" font-size="11" fill="#111827" font-weight="700">IR EOS (Tabla 4)</text>
         <line x1="10" y1="33" x2="30" y2="33" stroke="#14284B" stroke-width="2" stroke-dasharray="5 3" /><text x="36" y="37" font-size="11" fill="#111827">GERG-2008 (Tabla 4)</text>
-        <line x1="10" y1="50" x2="30" y2="50" stroke="#6B7280" stroke-width="2.5" /><text x="36" y="54" font-size="11" fill="#111827">PR EOS (en vivo)</text>
-        <circle cx="20" cy="68" r="4" fill="#14284B" /><text x="36" y="72" font-size="11" fill="#111827">Exp. · ✕ GMA válido</text>
+        <line x1="10" y1="50" x2="30" y2="50" stroke="#6B7280" stroke-width="2.5" /><text x="36" y="54" font-size="11" fill="#111827">PR EOS (Tabla 4)</text>
+        <circle cx="20" cy="68" r="4" fill="#14284B" /><text x="36" y="72" font-size="11" fill="#111827">Experimental (Tabla 4)</text>
       </g>`;
     }
 
-    // Axes frame
     const axes = `<line x1="${pad.l}" y1="${H - pad.b}" x2="${W - pad.r}" y2="${H - pad.b}" stroke="#14284B" stroke-width="2" />
                   <line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${H - pad.b}" stroke="#14284B" stroke-width="2" />`;
 
@@ -747,16 +719,13 @@
     renderTimer();
     const params = new URLSearchParams(window.location.search);
     const initialStep = parseInt(params.get("step") || "0", 10);
-    if (params.get("hidden") === "1") {
-      btnHiddenIso.click();
-    }
     const chartParam = params.get("chart");
     if (chartParam && ["reg-ir", "reg-gma", "iso-pr"].includes(chartParam)) {
       activeChart = chartParam;
       document.querySelectorAll(".tab-btn").forEach((t) => t.classList.toggle("active", t.dataset.chart === chartParam));
       renderLabChart();
     }
-    if (params.get("modal") === "code") modalCode.classList.add("open");
+    if (params.get("modal") === "global") modalGlobal.classList.add("open");
     if (params.get("modal") === "critique") modalCritique.classList.add("open");
     if (params.get("notes") === "1") notesDrawer.classList.add("open");
     goToStep(Number.isFinite(initialStep) ? initialStep : 0, false);

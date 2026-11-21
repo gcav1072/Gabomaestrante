@@ -17,7 +17,7 @@
 | `2B` | 2. Anatomía de la Solución | **Ruben** | `02:05 – 02:50` | 45 s |
 | `3A` | 3. Derivación Matemática | **Ruben** | `02:50 – 03:50` | 60 s |
 | `3B` | 3. Ec. Operativa y Cierre Bloque I | **Ruben → Relevo** | `03:50 – 04:45` | 55 s |
-| `4` | 4. Laboratorio Numérico en Vivo (JS) | **Gabriel** | `04:45 – 07:45` | 3 min |
+| `4` | 4. Resultados del Artículo (Tabla 4 y Global) | **Gabriel** | `04:45 – 07:45` | 3 min |
 | `5` | 5. Áreas de Uso y Limitaciones | **Gabriel** | `07:45 – 09:00` | 1 min 15 s |
 | `6` | 6. Conclusión y Reflexión de Cierre | **Gabriel** | `09:00 – 09:50` | 50 s |
 | `⟲` | Zoom-out final (Ronda de preguntas) | **Ambos** | `09:50 – 10:00` | 10 s + Q&A |
@@ -30,7 +30,7 @@
 > **Acción:** Iniciar en la Vista General del mapa. Al presionar **`→`** para pasar al Paso `1`, arranca automáticamente el cronómetro de 10 minutos.
 
 **Discurso sugerido:**
-> “Buenos días/tardes a todos. Mi nombre es Ruben Barrios y junto con mi compañero Gabriel Astudillo, de la Cohorte 9-A de la Maestría en Ingeniería de Gas de la UDO, les presentamos hoy el análisis técnico de un artículo reciente sobre modelado termodinámico para gas natural y gas natural licuado (LNG). En los próximos diez minutos recorreremos el problema industrial que motiva el trabajo, la formulación matemática del modelo propuesto —el **IR EOS**—, una demostración numérica calculada en vivo en esta misma presentación con los datos del estudio, y finalmente sus áreas de aplicación y límites reales.”
+> “Buenos días/tardes a todos. Mi nombre es Ruben Barrios y junto con mi compañero Gabriel Astudillo, de la Cohorte 9-A de la Maestría en Ingeniería de Gas de la UDO, les presentamos hoy el análisis técnico de un artículo reciente sobre modelado termodinámico para gas natural y gas natural licuado (LNG). En los próximos diez minutos recorreremos el problema industrial que motiva el trabajo, la formulación matemática del modelo propuesto —el **IR EOS**—, la comparación cuantitativa de los resultados reportados por los autores frente a Peng-Robinson y GERG-2008 (junto con el contraste gráfico frente a GMA), y finalmente sus áreas de aplicación y límites reales.”
 
 ---
 
@@ -89,35 +89,36 @@
 >
 > ¿De dónde salen $A(T), B(T)$ y $C(T)$? De las **Ecs. (12) a (14)**, donde cada parámetro varía con la temperatura mediante tres constantes globales —**nueve constantes en total** $(A_0\dots C_2)$ calibradas por mezcla—.
 >
-> En resumen: toda esa derivación intermolecular decanta en un **polinomio directo en $\rho$** capaz de predecir densidades en gas y líquido en milisegundos. Ahora, para comprobar si esto funciona de verdad frente a Peng-Robinson, GMA y GERG-2008, le doy el pase a **Gabriel**, quien nos mostrará los cálculos ejecutándose en vivo con los datos del propio artículo.”
+> En resumen: toda esa derivación intermolecular decanta en un **polinomio directo en $\rho$** capaz de predecir densidades en gas y líquido en milisegundos. Ahora, para revisar cómo se desempeña este modelo en las tablas comparativas del artículo frente a GERG-2008 y Peng-Robinson, le doy el pase a **Gabriel**.”
 
 ---
 
 ## Bloque II — Ing. Gabriel Astudillo (`04:45 – 10:00`)
 
-### Paso `4` · Laboratorio Numérico en Vivo (`04:45 – 07:45`)
-> **Acción (coreografía recomendada en vivo — 3 minutos):**
-> 1. Al entrar al Paso `4`, ya está seleccionada la isoterma **`307.85 K`** a **`40.03 MPa`** y la pestaña **`Regularidad (Z−1)ν³`**.
-> 2. *(05:25)* Clic en **`Composición`** para mostrar brevemente la mezcla `N. gas 11` (Tabla 1, 89.57% metano) y cerrar.
-> 3. *(05:45)* Cambiar a la pestaña **`Falla GMA (2Z−1)ν³`** para mostrar la recta roja fallando sobre los puntos curvos.
-> 4. *(06:10)* Cambiar a **`Isoterma ρ vs P`** y mover el slider/botones de presión (ej. bajar a **`14.92 MPa`** o subir a **`40.03 MPa`**) para ver PR desviándose arriba y GMA sin raíz.
-> 5. *(06:40)* Activar **`Isoterma Oculta: ON`** (y probar cambiar entre **`307.85 K`** y **`356.95 K`**) para demostrar predicción fuera de muestra.
-> 6. *(07:15)* Opcional según tiempo/audiencia: abrir **`Notas Críticas`** o **`</> Código JS`** brevemente y cerrar antes de pasar al Paso `5`.
+### Paso `4` · Resultados del Artículo — Tabla 4 y Resumen Global (`04:45 – 07:45`)
+> **Acción (coreografía recomendada — 3 minutos):**
+> 1. Al entrar al Paso `4`, aparece la isoterma **`307.85 K`** a **`40.03 MPa`** (Tabla 4) y la pestaña **`Regularidad (Z−1)ν³`**.
+> 2. *(05:25)* Clic en **`Composición (Tabla 1)`** para mostrar la mezcla `N. gas 11` (89.57% metano) y cerrar.
+> 3. *(05:45)* Cambiar brevemente a **`Contraste GMA (Fig. 1)`** para recordar el contraste visual de las Figs. 1 vs. 3 del paper.
+> 4. *(06:15)* Cambiar a **`Isoterma ρ vs P`** y desplazar la presión desde **`14.92 MPa`** hasta **`40.03 MPa`** (o cambiar a **`406.25 K`**) para mostrar los datos exactos de la Tabla 4 y la deriva de PR a alta presión.
+> 5. *(06:50)* Abrir **`Resumen Global (Tablas 2 y 5)`** para mostrar el desempeño completo sobre los **615 puntos** de densidad y **79 puntos** de $C_p$, y cerrar.
+> 6. *(07:20)* Opcional según tiempo/audiencia: abrir brevemente **`Notas Críticas`** para comentar la auditoría metodológica.
 
 **Discurso sugerido:**
-> “Gracias, Ruben. Lo que tienen en pantalla no es una tabla estática: es un módulo escrito en JavaScript que resuelve las ecuaciones en tiempo real en el navegador sobre los **30 puntos experimentales de la Tabla 4**, correspondientes a la mezcla **N. gas 11** de Barreau et al. *(abrir brevemente `Composición` y cerrar)*: casi 90% metano, 8.35% etano y trazas hasta pentanos y nitrógeno.
+> “Gracias, Ruben. En esta lámina integramos de forma interactiva los **30 puntos experimentales publicados en la Tabla 4 del artículo**, correspondientes a la mezcla **N. gas 11** de Barreau et al. *(abrir `Composición (Tabla 1)` y cerrar)*: casi 90% metano, 8.35% etano y trazas hasta pentanos y nitrógeno.
 >
-> Arrancamos en el punto más exigente de la isoterma fría: **307.85 K y 40.03 MPa**, donde la densidad experimental es **14,914.1 mol/m³**. Fíjense en las cuatro tarjetas calculadas en vivo:
-> - **PR EOS**, calculada analíticamente con reglas de mezcla estándar, se desvía **+7.3%** por encima del dato real —un error típico de las cúbicas a alta presión—.
-> - **GMA EOS**, ajustada linealmente sobre esta isoterma, ni siquiera aparece con valor: dice **‘Sin solución real’**. ¿Por qué? *(cambiar a la pestaña `Falla GMA (2Z−1)ν³`)* Aquí se ve exactamente la razón: la recta roja de GMA no logra capturar la curvatura real de los puntos experimentales, y en **7 de los 30 puntos** directamente no corta la curva $P\text{–}\rho$.
-> - **GERG-2008**, tomando el valor reportado por los autores en la Tabla 4, queda con **+1.39%** en este punto (`1.90%` global en la tabla).
-> - Y el **IR EOS**, ajustando las 9 constantes mediante factorización QR y resolviendo el polinomio cuártico, cae a **0.27%** aquí y **0.19% de error medio (AAD)** en los 30 puntos. *(cambiar a `Isoterma ρ vs P`)* En esta curva $\rho\text{–}P$ se aprecia de un vistazo: mientras PR se despega hacia arriba conforme sube la presión y GMA pierde raíces, el IR EOS abraza los puntos experimentales.
+> Comencemos en el punto de mayor presión de la isoterma fría: **307.85 K y 40.03 MPa**, donde la densidad experimental medida es **14,914.1 mol/m³**. Fíjense en las tres tarjetas con los valores exactos que reporta el estudio:
+> - **PR EOS** sobreestima la densidad en **+7.69%** (`16,061 mol/m³`), reflejando la pérdida de exactitud típica de las cúbicas a altas presiones.
+> - **GERG-2008**, según los valores reportados en la Tabla 4, queda con **+1.39%** en este punto (`1.90%` AAD promedio en la tabla).
+> - **IR EOS**, en cambio, alcanza **15,003.8 mol/m³** (`+0.60%` en este punto) y un promedio **AAD de apenas 0.15%** a lo largo de los 30 puntos de la Tabla 4.
 >
-> Ahora bien, un ingeniero crítico diría con razón: *‘claro, IR EOS tiene ventaja aquí porque es un modelo correlativo que ajustó sus 9 constantes sobre la mezcla, mientras PR predice sin ver los datos’*. Para poner eso a prueba en vivo, activamos **`Isoterma Oculta: ON`**.
-> *(hacer clic en `Isoterma Oculta: ON`)*
-> Al activarlo, excluimos por completo esta temperatura del ajuste —el algoritmo solo calibra con las otras 4 isotermas— y predice los 6 puntos de **307.85 K** por extrapolación térmica. Aun en el borde frío sin haber visto la isoterma, el error medio es **0.80%**; y si pasamos a una isoterma intermedia como **356.95 K** *(clic en `356.95 K`)*, cae a **0.17%**, muy por debajo de PR (`5%`) e incluso menor que el GERG reportado en el artículo.
+> *(cambiar brevemente a `Contraste GMA (Fig. 1)`)* Noten también que el modelo **GMA original** ni siquiera entra en las tablas numéricas de resultados porque —como muestran las Figs. 1 y 2 del paper— su recta lineal no logra capturar la curvatura real de los datos experimentales en fase gas.
 >
-> *(opcional: clic en `Notas Críticas`)* Como detalle de auditoría técnica —que dejamos en `Notas Críticas`—, vale notar que el `1.90%` reportado por los autores para GERG-2008 en esta mezcla de 90% metano (y algunas celdas `ERROR` en su Tabla 2) es inusualmente alto frente a lo que GERG suele lograr en implementaciones estándar como NIST REFPROP. Eso nos invita a evaluar las ventajas del IR con rigor.”
+> Si cambiamos a la vista **`Isoterma ρ vs P`** *(clic en `Isoterma ρ vs P` y recorrer presiones de `14.92` a `40.03 MPa`)*, observamos exactamente el patrón que reportan los autores: a baja presión todos los modelos están más cerca, pero al subir hacia 35–40 MPa, Peng-Robinson se despega claramente por encima de la curva experimental mientras IR EOS sigue fielmente la tendencia.
+>
+> Y si ampliamos la mirada más allá de esta mezcla *(clic en `Resumen Global (Tablas 2 y 5)`)*: en la **Tabla 2** del artículo —que cubre **14 mezclas y 615 puntos** hasta 190 MPa incluyendo dos de LNG— IR EOS logra un **AAD global de 0.397%**, frente a **2.36%** reportado para GERG-2008 y **6.316%** de PR. En **capacidad calorífica ($C_p$)** (Tabla 3, 79 puntos), la ventaja se reduce (`1.95%` IR vs `2.02%` GERG).
+>
+> *(opcional: clic en `Notas Críticas` y cerrar)* Como lectura crítica para una audiencia técnica —resumida en `Notas Críticas`— vale subrayar dos puntos: primero, que IR EOS es un modelo **correlativo** que calibra 9 constantes por mezcla (publicadas en su material suplementario), mientras PR y GERG son predictivos; y segundo, que llama la atención el **1.90%–2.33%** reportado para GERG en una mezcla de 90% metano (e incluso celdas `ERROR` en la Tabla 2), cifras atípicas frente a implementaciones estándar como REFPROP, donde GERG suele rondar el `0.1%`.”
 
 ---
 
@@ -125,14 +126,14 @@
 > **Acción:** Avanzar a **`5`**. Apuntar primero a la columna izquierda (flujo de tubería) y luego a la derecha (gauge $C_p$ y moléculas $\text{H}_2\text{O}/\text{H}_2$).
 
 **Discurso sugerido:**
-> “Con la evidencia numérica sobre la mesa, ¿dónde aporta valor real el IR EOS y cuáles son sus límites?
+> “Con los números sobre la mesa, ¿dónde aporta valor real el IR EOS y cuáles son sus límites?
 >
-> En el lado izquierdo, su gran fortaleza es la **predicción de densidad en tiempo real**: con una arquitectura algebraica liviana y un error global reportado de **0.397% hasta 190 MPa**, es ideal para integrarse en sistemas SCADA, gemelos digitales o monitoreo de flujo desde la tubería —como muestra el diagrama— hacia la prevención de sólidos, control de separación de fases y optimización del efecto Joule-Thomson en plantas criogénicas de LNG.
+> En el lado izquierdo, su gran fortaleza es la **predicción de densidad en tiempo real**: con una arquitectura algebraica liviana y un error global reportado de **0.397% hasta 190 MPa**, resulta atractivo para integrarse en sistemas SCADA, gemelos digitales o monitoreo de flujo desde la tubería —como muestra el diagrama— hacia la prevención de sólidos, control de separación de fases y optimización del efecto Joule-Thomson en plantas criogénicas de LNG.
 >
-> En el lado derecho están sus **compromisos y limitaciones**, que debemos tener muy claros:
-> 1. **Propiedades secundarias:** cuando pasamos de densidad a capacidad calorífica ($C_p$) o segundo coeficiente virial, el margen se estrecha (`1.95%` frente a `2.02%` reportado para GERG), y GERG sigue siendo la referencia consolidada en propiedades calóricas y de transporte.
+> En el lado derecho están sus **compromisos y limitaciones**:
+> 1. **Propiedades secundarias:** cuando pasamos de densidad a capacidad calorífica ($C_p$) o segundo coeficiente virial, el margen frente a GERG desaparece (`1.95%` vs `2.02%`), y GERG sigue siendo referencia en propiedades calóricas y de transporte.
 > 2. **Composición:** el potencial Lennard-Jones (9, 6, 3) está calibrado para hidrocarburos típicos de gas natural; en corrientes con **especies polares como agua** o **mezclas ricas en hidrógeno**, requiere reformulación.
-> 3. **Dependencia de datos:** al ser correlativo, necesita datos previos por mezcla para calibrar $(A_0\dots C_2)$, y conviene validarlo frente a implementaciones verificadas de REFPROP/GERG antes de desplegarlo en diseño crítico.”
+> 3. **Dependencia de datos:** al ser correlativo, necesita datos experimentales previos por mezcla para calibrar $(A_0\dots C_2)$, además de validar contra implementaciones certificadas de NIST/REFPROP antes de adoptarlo en diseño crítico.”
 
 ---
 
@@ -141,21 +142,21 @@
 
 **Discurso sugerido:**
 > “Para cerrar, resumimos el artículo en tres pilares:
-> 1. **Innovación teórica:** rescatar la idea de regularidad isotérmica de GMA y corregirla mediante el potencial LJ (9, 6, 3) en $(Z-1)\nu^3$ resuelve su colapso en fase gaseosa.
-> 2. **Logro industrial:** ofrece precisión sobresaliente en densidad (`0.397%` global en el estudio y `0.19%` en nuestra verificación en vivo) con velocidad de ejecución apta para tiempo real.
-> 3. **Vector de futuro:** deja una base abierta para extenderse hacia mezclas de transición energética ($\text{H}_2, \text{CO}_2$) y recalibración automática de sus 9 parámetros asistida por técnicas de *Machine Learning*.
+> 1. **Innovación teórica:** rescatar la regularidad isotérmica de GMA y corregirla mediante el potencial LJ (9, 6, 3) en $(Z-1)\nu^3$ resuelve su colapso en fase gaseosa.
+> 2. **Logro industrial:** ofrece precisión sobresaliente en densidad (`0.397%` global en el estudio y `0.15%` en los datos de Tabla 4 de N. gas 11) con rapidez de cálculo apta para tiempo real.
+> 3. **Vector de futuro:** deja una base abierta para extenderse hacia mezclas de transición energética ($\text{H}_2, \text{CO}_2$) y recalibración automática de sus 9 parámetros asistida por *Machine Learning*.
 >
 > Como reflexión final: *el valor de una ecuación de estado en ingeniería no reside en su complejidad matemática, sino en equilibrar el rigor físico con la rapidez necesaria para decidir en tiempo real.*
 >
-> *(Avanzar un paso a **`⟲`** para abrir el mapa completo)* Muchas gracias a todos por su atención. Quedamos abiertos a sus preguntas o a volver sobre cualquier punto del laboratorio.”
+> *(Avanzar un paso a **`⟲`** para abrir el mapa completo)* Muchas gracias a todos por su atención. Quedamos atentos a sus preguntas.”
 
 ---
 
 ## Guía Rápida para Preguntas del Jurado / Audiencia (Q&A)
 
-- **“¿Por qué su cálculo en vivo da `0.19%` de AAD y la Tabla 4 del artículo da `0.15%`?”**  
-  Los 9 coeficientes exactos $(A_0\dots C_2)$ del artículo están en material suplementario no incluido en el PDF. Nuestro solver los recupera directamente de los 30 puntos experimentales mediante mínimos cuadrados lineales (QR) sobre $Z-1 = A(T)\rho + B(T)\rho^2 + C(T)\rho^3$, reproduciendo el mismo comportamiento físico con una diferencia de apenas 4 centésimas porcentuales.
-- **“¿Por qué Peng-Robinson dio `5.06%` en vivo y `5.19%` en el artículo?”**  
-  La diferencia máxima punto a punto es menor a `0.34%` y obedece a parámetros críticos ligeramente distintos de componente puro o coeficientes de interacción binaria $k_{ij}$ utilizados por los autores (en nuestro cálculo usamos $k_{ij}=0$).
-- **“¿Qué hace exactamente el botón `</> Código JS`?”**  
-  Muestra la implementación real que está corriendo en la diapositiva: unas 15 líneas con las Ecs. (12)–(14) y el ciclo Newton-Raphson de la Ec. (11), junto con los 9 valores numéricos de $A_0\dots C_2$ calculados al instante.
+- **“¿Por qué en la Tabla 2 la fila de `N. gas 11` dice `0.03%` para IR, `5.27%` para PR y `2.33%` para GERG, mientras el promedio de la Tabla 4 da `0.15%`, `5.19%` y `1.90%`?”**  
+  Es una inconsistencia numérica interna del propio artículo (posiblemente porque la Tabla 2 resumió un subconjunto o redondeos distintos frente a las 30 filas impresas en la Tabla 4). En el modal **`Notas Críticas`** dejamos documentada esa diferencia para transparencia técnica.
+- **“¿Por qué GMA EOS no tiene tarjeta ni barra numérica en la Diapositiva 4?”**  
+  Porque los autores no reportaron densidades ni AAD % numéricos de GMA en las Tablas 2, 3, 4 ni 5; solo lo mostraron gráficamente en las Figs. 1 y 2 para evidenciar que su relación lineal $(2Z-1)\nu^3$ vs. $\rho$ falla en fase gas, por lo cual lo dejamos únicamente como contraste visual en la pestaña **`Contraste GMA (Fig. 1)`**.
+- **“¿Qué pasa si no se tienen las 9 constantes $(A_0\dots C_2)$ de una mezcla nueva?”**  
+  Al ser un modelo correlativo, el usuario necesita datos $P\rho T$ experimentales de esa familia de mezcla para ajustar las 9 constantes (los autores publicaron las de sus 14 mezclas en material suplementario); en cambio, PR o GERG-2008 pueden aplicarse sin calibración local adicional.
